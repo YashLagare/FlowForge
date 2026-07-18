@@ -9,6 +9,7 @@ export async function sendEmail({
   subject: string
   body: string
 }) {
+  //for free plan we have to use onboarding@resend.dev as from address also we can send our self email through this address that we login in resend account
   const { data, error } = await resend.emails.send({
     from: "onboarding@resend.dev",
     to,

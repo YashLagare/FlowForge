@@ -1,12 +1,12 @@
 "use client";
 
-import { ReactNode } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import {
+  ClientSideSuspense,
   LiveblocksProvider,
   RoomProvider,
-  ClientSideSuspense,
 } from "@liveblocks/react/suspense";
-import { Spinner } from "@/components/ui/spinner";
+import { ReactNode } from "react";
 
 export function Room({
   roomId,
@@ -49,6 +49,7 @@ export function Room({
           {children}
         </ClientSideSuspense>
       </RoomProvider>
+      
     </LiveblocksProvider>
   );
 }

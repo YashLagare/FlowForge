@@ -7,22 +7,15 @@ export function useActiveSection(sectionIds: string[]) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the intersection entry with the highest intersection ratio
-        // or just the first one that is intersecting
-        let currentActiveId = ""
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            currentActiveId = entry.target.id
+            setActiveSection(entry.target.id)
           }
         })
-        
-        if (currentActiveId) {
-          setActiveSection(currentActiveId)
-        }
       },
       { 
-        // Trigger when section hits the top 1/3rd of the viewport
-        rootMargin: "-20% 0px -60% 0px" 
+        // Trigger when the element crosses the middle 40% of the screen
+        rootMargin: "-30% 0px -30% 0px"
       }
     )
 

@@ -129,7 +129,7 @@ export function TestimonialsSection() {
   const [firstColumn, secondColumn, thirdColumn] = TESTIMONIAL_COLUMNS
 
   return (
-    <section className="bg-background py-24 relative overflow-hidden">
+    <section id="how-it-works" className="bg-background py-24 relative overflow-hidden">
       <div className="container z-10 mx-auto px-4 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

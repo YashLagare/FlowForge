@@ -2,13 +2,12 @@ export const siteConfig = {
   name: "FlowForge",
   description:
     "Build AI workflows visually. A drag & drop node editor with AI agent nodes to execute workflows instantly and monitor history.",
-  url: "https://flowforge.app", // Placeholder
-  ogImage: "https://flowforge.app/og.jpg", // Placeholder
+  url: "https://flow-forge-ebon.vercel.app",
+  // ogImage: "https://flow-forge-ebon.vercel.app/og-image.png",
   links: {
-    twitter: "https://twitter.com/flowforge",
-    github: "https://github.com/",
-    linkedin: "https://linkedin.com/",
-    instagram: "https://instagram.com/",
+    github: "https://github.com/YashLagare",
+    linkedin: "https://www.linkedin.com/in/yashlagare/",
+    instagram: "https://www.instagram.com/yashlagare/?hl=en",
   },
   supportEmail: "yashlagare77@gmail.com",
 }

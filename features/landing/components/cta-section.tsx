@@ -15,7 +15,7 @@ export function CtaSection() {
             <Button size="lg" variant="secondary" className="px-8 h-12 text-base" asChild>
               <Link href="/sign-up">Get Started Free</Link>
             </Button>
-            <Button size="lg" variant="outline" className="px-8 h-12 text-base bg-transparent border-primary-foreground/20 hover:bg-primary-foreground/10 text-primary-foreground" asChild>
+            <Button size="lg" variant="outline" className="px-8 h-12 text-base bg-transparent border-primary-foreground/20 hover:bg-primary-foreground/10 text-primary-foreground hover:text-primary-foreground" asChild>
               <Link href="/pricing">View Pricing</Link>
             </Button>
           </div>

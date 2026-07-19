@@ -18,17 +18,17 @@ export function PricingSection() {
           {/* Free Plan */}
           <div className="flex flex-col p-8 bg-card rounded-3xl border border-border shadow-sm">
             <h3 className="text-2xl font-bold mb-2">Free</h3>
-            <p className="text-muted-foreground mb-6">Perfect for individuals and small projects.</p>
+            <p className="text-muted-foreground mb-6">Perfect for individuals and small projects automating simple tasks.</p>
             <div className="mb-6">
               <span className="text-4xl font-extrabold">$0</span>
               <span className="text-muted-foreground">/month</span>
             </div>
             <ul className="space-y-4 mb-8 flex-1">
               {[
-                "Unlimited basic workflows",
-                "Standard nodes (Triggers, Actions)",
-                "Community support",
-                "Basic execution history",
+                "Unlimited Durable Workflows",
+                "Core Browser Actions & Triggers",
+                "Community Support",
+                "Standard Execution Logs",
               ].map((feature, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <CheckCircle2 className="h-5 w-5 text-primary" />
@@ -48,7 +48,7 @@ export function PricingSection() {
               RECOMMENDED FOR ORGS
             </div>
             <h3 className="text-2xl font-bold mb-2">Pro</h3>
-            <p className="text-primary-foreground/80 mb-6">For organizations that need AI power and collaboration.</p>
+            <p className="text-primary-foreground/80 mb-6">For teams that need autonomous AI capabilities and real-time collaboration.</p>
             <div className="mb-6">
               <span className="text-4xl font-extrabold">$19</span>
               <span className="text-primary-foreground/80">/month per seat (billed annually)</span>
@@ -56,11 +56,11 @@ export function PricingSection() {
             <ul className="space-y-4 mb-8 flex-1">
               {[
                 "Everything in Free, plus:",
-                "Powerful AI Agent Nodes",
-                "Advanced Execution Replays",
-                "Real-time multiplayer collaboration",
-                "Organization-level billing & RBAC",
-                "Priority support",
+                "Autonomous AI Agent Nodes",
+                "Live Multiplayer Canvas",
+                "Video Session Replays",
+                "Team Workspaces & RBAC",
+                "Priority Support",
               ].map((feature, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <CheckCircle2 className="h-5 w-5 text-primary-foreground" />

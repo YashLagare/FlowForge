@@ -11,13 +11,13 @@ export function HeroSection() {
           🚀 FlowForge Pro is now available
         </div>
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-4xl mb-6">
-          Build AI Workflows <br className="hidden md:block" />
+          Build AI-Powered Workflows <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
             Visually & Instantly
           </span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10">
-          {siteConfig.description} Connect nodes, add AI agents, and execute powerful automation without writing a single line of code.
+          A powerful drag-and-drop node editor built for the modern web. Seamlessly connect logic nodes, integrate autonomous AI agents, and execute durable background automations without writing a single line of code.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
           <Button size="lg" asChild className="gap-2 h-12 px-8 text-base">

@@ -9,33 +9,33 @@ import {
 
 const features = [
   {
-    title: "Visual Drag & Drop",
-    description: "Build complex workflows simply by dragging nodes and connecting edges on an infinite canvas.",
+    title: "Infinite Visual Canvas",
+    description: "Architect complex logic effortlessly by dragging nodes and connecting edges on a high-performance, infinite workspace.",
     icon: MousePointer2,
   },
   {
-    title: "AI Agent Node",
-    description: "Incorporate powerful LLM-driven agents directly into your workflow to process text, categorize data, and make decisions.",
+    title: "Autonomous AI Agents",
+    description: "Incorporate LLM-driven intelligence directly into your workflows to dynamically process text, categorize unstructured data, and make complex decisions on the fly.",
     icon: Bot,
   },
   {
-    title: "Instant Execution",
-    description: "Run your workflows instantly. No compilation time, no complicated deployment pipelines.",
+    title: "Durable Background Execution",
+    description: "Run your workflows instantly and reliably. Our resilient execution engine handles retries, timeouts, and long-running tasks without complex deployment pipelines.",
     icon: Zap,
   },
   {
-    title: "Execution Replays",
-    description: "Monitor history and replay past executions to trace exactly how data flowed through your nodes.",
+    title: "Video Session Replays",
+    description: "Never guess what went wrong. Watch pixel-perfect video recordings of your automated headless browser sessions to trace exactly how your workflow executed.",
     icon: History,
   },
   {
-    title: "Real-time Collaboration",
-    description: "Team-ready architecture lets your entire organization build and edit workflows simultaneously.",
+    title: "Live Multiplayer Co-Editing",
+    description: "Built for teams. Real-time sync allows your entire organization to view, build, and edit workflows simultaneously—just like Google Docs or Figma.",
     icon: Activity,
   },
   {
-    title: "Enterprise Security",
-    description: "Role-based access control and organization-level sandboxing ensure your data stays secure.",
+    title: "Enterprise-Grade Security",
+    description: "Multi-tenant organization workspaces, granular Role-Based Access Control (RBAC), and secure execution sandboxing ensure your data stays private and secure.",
     icon: ShieldCheck,
   },
 ]
@@ -45,9 +45,9 @@ export function FeaturesSection() {
     <section id="features" className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-8">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features for Modern Teams</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Enterprise-Grade Features for Modern Teams</h2>
           <p className="text-lg text-muted-foreground">
-            Everything you need to automate your business processes, accessible through an intuitive interface.
+            Everything you need to automate complex business processes, packaged in an intuitive and highly collaborative interface.
           </p>
         </div>
         

@@ -1,16 +1,16 @@
 "use server"
 
-import * as Sentry from "@sentry/nextjs"
 import { auth } from "@clerk/nextjs/server"
+import * as Sentry from "@sentry/nextjs"
 import { runs, tasks } from "@trigger.dev/sdk"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-import type { runWorkflowTask } from "@/features/workflows/tasks/run-workflow";
+import type { runWorkflowTask } from "@/features/workflows/tasks/run-workflow"
 
-import { liveblocks } from "@/lib/liveblocks"
 import { createWorkflow, deleteWorkflow, saveWorkflowGraph } from "@/features/workflows/data"
 import { WorkflowGraph } from "@/lib/db/schema"
+import { liveblocks } from "@/lib/liveblocks"
 
 export async function createWorkflowAction(name: string) {
   const { orgId } = await auth()
@@ -55,7 +55,7 @@ export async function deleteWorkflowAction(id: string) {
   Sentry.logger.info("Workflow deleted", { workflowId: id, orgId })
 
   revalidatePath("/workflows", "layout")
-  redirect("/")
+  redirect("/dashboard")
 }
 
 export async function runWorkflowAction({

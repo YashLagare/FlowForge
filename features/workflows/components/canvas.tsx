@@ -12,6 +12,7 @@ import {
     type Edge,
 } from "@xyflow/react";
 import { useSyncExternalStore } from "react";
+import { useTheme } from "next-themes";
 
 import { StepNode } from "@/features/workflows/components/step-node";
 import type { StepNodeType } from "@/features/workflows/nodes/node-registry";
@@ -46,7 +47,8 @@ function useMounted() {
 }
 
 export function Canvas() {
-  const colorMode: ColorMode = "light"
+  const { resolvedTheme } = useTheme();
+  const colorMode: ColorMode = resolvedTheme === "dark" ? "dark" : "light";
   const {
     nodes,
     edges,

@@ -6,9 +6,12 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
 import { WorkflowIcon } from "lucide-react"
+import { useActiveSection } from "@/hooks/use-active-section"
+import { cn } from "@/lib/utils"
 
 export function Navbar() {
   const pathname = usePathname()
+  const activeSection = useActiveSection(["features", "how-it-works", "faq"])
   
   const navLinks = [
     { name: "Features", href: "/#features" },
@@ -26,17 +29,28 @@ export function Navbar() {
             <span className="font-bold inline-block">{siteConfig.name}</span>
           </Link>
           <nav className="hidden md:flex gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-foreground/80 ${
-                  pathname === link.href ? "text-foreground" : "text-foreground/60"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isSectionLink = link.href.startsWith("/#")
+              const sectionId = isSectionLink ? link.href.split("#")[1] : ""
+              // A link is active if its corresponding section is on screen, or if we are on that exact page route
+              const isActive = (isSectionLink && activeSection === sectionId) || (!isSectionLink && pathname === link.href)
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "relative text-sm font-medium transition-colors hover:text-foreground/80 py-1",
+                    isActive ? "text-foreground" : "text-foreground/60"
+                  )}
+                >
+                  {link.name}
+                  {isActive && (
+                    <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-gradient-to-r from-orange-400 to-orange-600 rounded-full" />
+                  )}
+                </Link>
+              )
+            })}
           </nav>
         </div>
         <div className="flex items-center space-x-2">

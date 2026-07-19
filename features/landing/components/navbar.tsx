@@ -1,18 +1,15 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
 import { WorkflowIcon } from "lucide-react"
 
 export function Navbar() {
-  const pathname = usePathname()
-  
   const navLinks = [
     { name: "Features", href: "/#features" },
-    { name: "How it Works", href: "/#how-it-works" },
+    { name: "How it Works", href: "/how-it-works" },
     { name: "Pricing", href: "/pricing" },
     { name: "FAQ", href: "/#faq" },
   ]
@@ -30,9 +27,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-foreground/80 ${
-                  pathname === link.href ? "text-foreground" : "text-foreground/60"
-                }`}
+                className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80"
               >
                 {link.name}
               </Link>

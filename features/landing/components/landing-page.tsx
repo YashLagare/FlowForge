@@ -4,6 +4,7 @@ import { TestimonialsSection } from "./testimonials-section"
 import { FaqSection } from "./faq-section"
 import { PricingSection } from "./pricing-section"
 import { CtaSection } from "./cta-section"
+import { ScrollToTop } from "./scroll-to-top"
 
 export function LandingPage() {
   return (
@@ -14,6 +15,7 @@ export function LandingPage() {
       <FaqSection />
       <PricingSection />
       <CtaSection />
+      <ScrollToTop />
     </>
   )
 }

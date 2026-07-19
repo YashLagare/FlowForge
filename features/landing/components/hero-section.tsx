@@ -25,11 +25,6 @@ export function HeroSection() {
               Get Started Free <ArrowRight className="size-4" />
             </Link>
           </Button>
-          <Button size="lg" variant="outline" asChild className="gap-2 h-12 px-8 text-base">
-            <Link href="/learn-more">
-              <PlayCircle className="size-4" /> Learn More
-            </Link>
-          </Button>
         </div>
       </div>
       

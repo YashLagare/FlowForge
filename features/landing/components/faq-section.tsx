@@ -19,6 +19,18 @@ const faqs = [
     answer: "AI Agent Nodes are special powerful nodes available on our Pro plan. They use Large Language Models to process unstructured text, make decisions, or generate content dynamically during your workflow execution.",
   },
   {
+    question: "How does the browser automation run?",
+    answer: "Your workflows are executed asynchronously in the background using our robust cloud infrastructure. You don't need to keep your browser tab open—we handle timeouts, retries, and complex browser orchestration for you.",
+  },
+  {
+    question: "Can I see what happened during an execution?",
+    answer: "Yes! We provide full execution session replays. You can watch a video recording of the headless browser executing your workflow to easily debug and verify your automation steps.",
+  },
+  {
+    question: "How do team workspaces function?",
+    answer: "You can create an Organization and invite your team members with specific roles. All workflows belong to the workspace, ensuring your entire team can securely access and collaborate on the same automations.",
+  },
+  {
     question: "How does the pricing work?",
     answer: "We offer a Free plan for individuals and a Pro plan for organizations at $19/month per seat (billed annually). The Pro plan unlocks AI Agents, execution replays, and multiplayer collaboration.",
   },

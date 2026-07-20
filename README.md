@@ -227,15 +227,25 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 
 ## 7 UI Screenshots
 
-[INSERT_HOME_PAGE_SCREENSHOT]
+<img width="1901" height="907" alt="1home-page" src="https://github.com/user-attachments/assets/5707f1ac-d3e3-430a-ac59-5824338fe19a" />
 
-[INSERT_DASHBOARD_SCREENSHOT]
 
-[INSERT_LOGIN_PAGE_SCREENSHOT]
+<img width="1917" height="905" alt="2login-page" src="https://github.com/user-attachments/assets/d9176ebf-6c61-4387-ad5d-c70fb3ffccf2" />
 
-[INSERT_WORKFLOW_CANVAS_SCREENSHOT]
 
-[INSERT_BILLING_PAGE_SCREENSHOT]
+<img width="1917" height="912" alt="3org-page" src="https://github.com/user-attachments/assets/a0a0a89e-400c-4cb3-8391-b6d0b8d9c08a" />
+
+
+<img width="1917" height="907" alt="4join-invitationORCreateOrg" src="https://github.com/user-attachments/assets/f570d3bd-3766-4efc-97ad-df14ab7c9582" />
+
+
+<img width="1917" height="907" alt="5dashboardPage" src="https://github.com/user-attachments/assets/7f61b1c9-a0ce-4f61-a249-e060ef0bfc1f" />
+
+
+<img width="1911" height="897" alt="dashbord collabration-shows" src="https://github.com/user-attachments/assets/889905f9-2d8c-4920-8d5a-273e537ca1a0" />
+
+
+<img width="1902" height="912" alt="pricing -page" src="https://github.com/user-attachments/assets/e82b3663-a4ce-4dab-b206-55859aca5bdb" />
 
 ---
 

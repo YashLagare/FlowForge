@@ -3,7 +3,7 @@ export const siteConfig = {
   description:
     "Build AI workflows visually. A drag & drop node editor with AI agent nodes to execute workflows instantly and monitor history.",
   url: "https://flow-forge-ebon.vercel.app",
-  // ogImage: "https://flow-forge-ebon.vercel.app/og-image.png",
+  ogImage: "/og-image.png",
   links: {
     github: "https://github.com/YashLagare",
     linkedin: "https://www.linkedin.com/in/yashlagare/",

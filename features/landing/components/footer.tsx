@@ -1,6 +1,7 @@
-import Link from "next/link"
 import { siteConfig } from "@/config/site"
 import { WorkflowIcon } from "lucide-react"
+import Link from "next/link"
+import { ScrollToTop } from "./scroll-to-top"
 
 export function Footer() {
   return (
@@ -15,10 +16,10 @@ export function Footer() {
             {siteConfig.description}
           </p>
         </div>
-        
+
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold text-sm tracking-wider uppercase text-foreground">Navigation</h3>
-          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">Home</Link>
+          <Link href="/" onClick={ScrollToTop} className="text-sm text-muted-foreground hover:text-foreground">Home</Link>
           <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground">Features</Link>
           <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">Pricing</Link>
         </div>

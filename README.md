@@ -10,7 +10,8 @@ Browser automation platform with a visual, real-time collaborative node-based wo
 **Repository Structure Summary:**
 A modern Next.js 16 monorepo-style structure utilizing the App Router. The application is divided by domain logic in the `features/` directory and routed through `app/`. It integrates heavily with external managed services for authentication, database, real-time collaboration, and background task execution.
 
-[INSERT_PROJECT_COVER_SCREENSHOT]
+<img width="1917" height="907" alt="5dashboardPage" src="https://github.com/user-attachments/assets/dec4c586-f3f9-45f8-b408-6df106f8f9b6" />
+
 
 ---
 

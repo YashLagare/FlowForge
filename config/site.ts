@@ -8,6 +8,7 @@ export const siteConfig = {
     github: "https://github.com/YashLagare",
     linkedin: "https://www.linkedin.com/in/yashlagare/",
     instagram: "https://www.instagram.com/yashlagare/?hl=en",
+    portfolio: "https://portfolio-five-opal-53.vercel.app/"
   },
   supportEmail: "yashlagare77@gmail.com",
 }

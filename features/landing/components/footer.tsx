@@ -36,7 +36,8 @@ export function Footer() {
           <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">GitHub</a>
           <a href={siteConfig.links.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">LinkedIn</a>
           <a href={siteConfig.links.instagram} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">Instagram</a>
-          <a href={`mailto:${siteConfig.supportEmail}`} className="text-sm text-muted-foreground hover:text-foreground">Support</a>
+          <a href={siteConfig.links.portfolio} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">Portfolio</a>
+          {/* <a href={`mailto:${siteConfig.supportEmail}`} className="text-sm text-muted-foreground hover:text-foreground">Support</a> */}
         </div>
       </div>
       <div className="container mx-auto px-4 sm:px-8 mt-12 pt-8 border-t border-border">

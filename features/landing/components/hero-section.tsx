@@ -1,7 +1,6 @@
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { siteConfig } from "@/config/site"
-import { ArrowRight, PlayCircle } from "lucide-react"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export function HeroSection() {
   return (
@@ -17,7 +16,7 @@ export function HeroSection() {
           </span>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10">
-          A powerful drag-and-drop node editor built for the modern web. Seamlessly connect logic nodes, integrate autonomous AI agents, and execute durable background automations without writing a single line of code.
+          Build powerful browser automations with an intuitive drag-and-drop workflow editor. Collaborate in real time, integrate AI-powered automation, and execute durable background workflows—all without writing a single line of code.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
           <Button size="lg" asChild className="gap-2 h-12 px-8 text-base">
@@ -27,7 +26,7 @@ export function HeroSection() {
           </Button>
         </div>
       </div>
-      
+
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>

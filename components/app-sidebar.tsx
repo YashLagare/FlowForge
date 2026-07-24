@@ -62,7 +62,7 @@ export async function AppSidebar({
                   Upgrade to Pro
                 </CardTitle>
                 <CardDescription className="text-xs leading-relaxed">
-                  Unlock advanced AI agent nodes, session replays, unlimited workflows, and real-time collaboration with your team.
+                  Unlock premium nodes (Agent, Send Email), session replays, unlimited workflows, and real-time collaboration with your team.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 pt-2">

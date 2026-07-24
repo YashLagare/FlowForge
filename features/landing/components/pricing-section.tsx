@@ -56,7 +56,7 @@ export function PricingSection() {
             <ul className="space-y-4 mb-8 flex-1">
               {[
                 "Everything in Free, plus:",
-                "Autonomous AI Agent Nodes",
+                "Premium Nodes (Agent, Send Email)",
                 "Live Multiplayer Canvas",
                 "Video Session Replays",
                 "Team Workspaces & RBAC",

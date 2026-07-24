@@ -228,10 +228,10 @@ const sections: { kind: StepNodeKind; label: string }[] = [
 // Every node type from the registry, filtered into the groups below.
 const definitions = Object.values(nodeRegistry)
 
-// Node types that only orgs on the Pro plan can add. The Agent node is our most
-// expensive node, so it's gated; every other node stays free to keep workflow
+// Node types that only orgs on the Pro plan can add. The Agent and Send Email nodes
+// are gated as premium; every other node stays free to keep workflow
 // building open to everyone.
-const premiumNodes = new Set<NodeType>(["agent"])
+const premiumNodes = new Set<NodeType>(["agent", "send-email"])
 
 // The Toolbar tab: a button per node type that adds it to the canvas.
 function Palette() {

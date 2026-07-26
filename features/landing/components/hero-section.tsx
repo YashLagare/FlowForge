@@ -7,7 +7,7 @@ export function HeroSection() {
     <section className="relative overflow-hidden bg-background pt-24 pb-32 md:pt-32 md:pb-40">
       <div className="container mx-auto px-4 sm:px-8 relative z-10 flex flex-col items-center text-center">
         <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-8">
-          🚀 FlowForge Pro is now available
+          🚀 Unlock powerful new nodes like Scheduled Workflows with FlowForge Pro
         </div>
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-4xl mb-6">
           Build AI-Powered Workflows <br className="hidden md:block" />

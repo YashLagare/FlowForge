@@ -213,14 +213,14 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 - **Dependencies:** `@liveblocks/react`, `@liveblocks/node`.
 
 **Workflow Execution Engine**
-- **Purpose:** Run constructed workflows in the background reliably.
-- **Business Value:** Ensures automations execute without tying up the user's browser, handling retries and timeouts gracefully.
-- **Main Components:** Server Action `runWorkflowAction`, Trigger.dev task `runWorkflowTask`.
+- **Purpose:** Run constructed workflows in the background reliably, either triggered manually or on a recurring cron schedule.
+- **Business Value:** Ensures automations execute without tying up the user's browser, handling retries, timeouts, and scheduled automation gracefully.
+- **Main Components:** Server Action `runWorkflowAction`, Trigger.dev task `runWorkflowTask`, Trigger.dev Schedules API.
 - **Dependencies:** `@trigger.dev/sdk`, `@browserbasehq/stagehand`.
 
 **Plan-Based Feature Gating**
-- **Purpose:** Restrict premium features (e.g., AI Agent nodes) to paid users.
-- **Business Value:** Drives monetization.
+- **Purpose:** Restrict premium features (e.g., AI Agent nodes, Schedule nodes) to paid users.
+- **Business Value:** Drives monetization and covers infrastructure costs for intensive background tasks.
 - **Main Components:** Clerk billing entitlements (`has({ plan: "pro" })`).
 - **Dependencies:** `@clerk/nextjs`.
 
@@ -484,6 +484,8 @@ Example: **Triggering a Workflow Execution**
 +------+-----------------------+
 | Browserbase (Headless Chrome)|
 +------------------------------+
+
+*(Note: Scheduled workflows bypass the Server Action and are triggered automatically by the Trigger.dev scheduler infrastructure based on the saved cron expression).*
 ```
 
 ---

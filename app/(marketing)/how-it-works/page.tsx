@@ -94,8 +94,16 @@ export default function LearnMorePage() {
             <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-xl font-bold">7</div>
             <div>
               <h3 className="text-2xl font-semibold mb-3">Inject Autonomous AI Agents</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                 Need the browser to make dynamic decisions? Drag an <strong>AI Agent Node</strong> into your flow. Connect extracted text into the AI node, write a custom prompt (e.g., <em>"Analyze this text and tell me if it is positive or negative"</em>), and the AI will make decisions on the fly.
+              </p>
+
+              <h3 className="text-2xl font-semibold mb-3">Automate with Scheduled Triggers</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                Want your workflow to run entirely hands-free? Replace the standard Start node with a <strong>Schedule Node</strong>.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                Using standard cron expressions (like <code>0 8 * * 1-5</code> to run every weekday at 8 AM), your workflows will execute automatically in the background on Trigger.dev's durable infrastructure.
               </p>
             </div>
           </div>

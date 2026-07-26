@@ -343,6 +343,8 @@ function Palette() {
 // The "..." menu for workflow-level actions.
 function ActionsMenu({ workflowId }: { workflowId: string }) {
   const [isPending, startTransition] = useTransition()
+  const { getNodes } = useReactFlow<StepNodeType>()
+  const isScheduled = getNodes().some((n) => n.data.type === "schedule")
 
   return (
     <DropdownMenu>
@@ -352,6 +354,30 @@ function ActionsMenu({ workflowId }: { workflowId: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-48">
+        {isScheduled && (
+          <DropdownMenuItem
+            className="text-xs text-orange-500 focus:bg-orange-500/10 focus:text-orange-600 [&_svg:not([class*='size-'])]:size-3.5"
+            disabled={isPending}
+            onSelect={(e) => {
+              e.preventDefault()
+              startTransition(async () => {
+                try {
+                  const result = await deleteScheduleAction(workflowId)
+                  if (result.error) {
+                    toast.error(result.error)
+                  } else {
+                    toast.success("Schedule deactivated successfully.")
+                  }
+                } catch {
+                  toast.error("Failed to deactivate schedule.")
+                }
+              })
+            }}
+          >
+            <Square />
+            Deactivate schedule
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           variant="destructive"
           disabled={isPending}
@@ -385,54 +411,29 @@ function RunButton({ workflowId }: { workflowId: string }) {
   const liveRun = useLiveRun()
   const isScheduled = getNodes().some((n) => n.data.type === "schedule")
 
-  if (liveRun) {
-    return (
-      <Button
-        size="sm"
-        variant="destructive"
-        disabled={isPending}
-        onClick={() => {
-          startTransition(async () => {
-            try {
-              await cancelWorkflowRunAction(liveRun.id)
-            } catch {
-              toast.error("Couldn't stop the run.")
-            }
-          })
-        }}
-      >
-        <Square fill="currentColor" />
-        Stop
-      </Button>
-    )
-  }
-
   if (isScheduled) {
     return (
-      <div className="flex gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-          disabled={isPending}
-          onClick={() => {
-            startTransition(async () => {
-              try {
-                const result = await deleteScheduleAction(workflowId)
-                if (result.error) {
-                  toast.error(result.error)
-                } else {
-                  toast.success("Schedule deactivated successfully.", { duration: 4000 })
+      <div className="flex gap-1 items-center">
+        {liveRun && (
+          <Button
+            size="icon"
+            variant="destructive"
+            className="h-8 w-8"
+            disabled={isPending}
+            title="Stop current background run"
+            onClick={() => {
+              startTransition(async () => {
+                try {
+                  await cancelWorkflowRunAction(liveRun.id)
+                } catch {
+                  toast.error("Couldn't stop the run.")
                 }
-              } catch (error) {
-                toast.error("Failed to deactivate schedule.")
-              }
-            })
-          }}
-        >
-          <Square className="mr-1 h-4 w-4 fill-current" />
-          Stop Schedule
-        </Button>
+              })
+            }}
+          >
+            <Square className="h-3.5 w-3.5 fill-current" />
+          </Button>
+        )}
         <Button
           size="sm"
           variant="secondary"
@@ -469,6 +470,28 @@ function RunButton({ workflowId }: { workflowId: string }) {
           Save Schedule
         </Button>
       </div>
+    )
+  }
+
+  if (liveRun) {
+    return (
+      <Button
+        size="sm"
+        variant="destructive"
+        disabled={isPending}
+        onClick={() => {
+          startTransition(async () => {
+            try {
+              await cancelWorkflowRunAction(liveRun.id)
+            } catch {
+              toast.error("Couldn't stop the run.")
+            }
+          })
+        }}
+      >
+        <Square className="mr-1 h-4 w-4 fill-current" />
+        Stop
+      </Button>
     )
   }
 

@@ -14,6 +14,7 @@ import {
 import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 
+import { useProPlan } from "@/features/workflows/hooks/use-pro-plan";
 import { StepNode } from "@/features/workflows/components/step-node";
 import type { StepNodeType } from "@/features/workflows/nodes/node-registry";
 
@@ -48,6 +49,7 @@ function useMounted() {
 
 export function Canvas() {
   const { resolvedTheme } = useTheme();
+  const { isPro } = useProPlan();
   const colorMode: ColorMode = resolvedTheme === "dark" ? "dark" : "light";
   const {
     nodes,
@@ -90,10 +92,12 @@ export function Canvas() {
         maxZoom={1}
       >
         <Controls />
-        <Cursors />
-        <Panel position="top-right">
-          <AvatarStack />
-        </Panel>
+        {isPro && <Cursors />}
+        {isPro && (
+          <Panel position="top-right">
+            <AvatarStack />
+          </Panel>
+        )}
       </ReactFlow>
     </div>
   )

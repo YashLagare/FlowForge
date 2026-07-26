@@ -27,12 +27,16 @@ const faqs = [
     answer: "Yes! We provide full execution session replays. You can watch a video recording of the headless browser executing your workflow to easily debug and verify your automation steps.",
   },
   {
+    question: "Can I run workflows on a recurring schedule?",
+    answer: "Absolutely. With our Pro plan, you can add a Schedule node and use standard cron expressions to run your workflow automatically in the background at specific times (e.g., every hour, daily at 9AM).",
+  },
+  {
     question: "How do team workspaces function?",
     answer: "You can create an Organization and invite your team members with specific roles. All workflows belong to the workspace, ensuring your entire team can securely access and collaborate on the same automations.",
   },
   {
     question: "How does the pricing work?",
-    answer: "We offer a Free plan for individuals and a Pro plan for organizations at $19/month per seat (billed annually). The Pro plan unlocks AI Agents, execution replays, and multiplayer collaboration.",
+    answer: "We offer a Free plan for individuals and a Pro plan for organizations at $19/month per seat (billed annually). The Pro plan unlocks AI Agents, Scheduled Workflows, execution replays, and Live Multiplayer collaboration.",
   },
   {
     question: "Can my team collaborate in real-time?",

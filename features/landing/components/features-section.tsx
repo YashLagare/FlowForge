@@ -4,7 +4,8 @@ import {
   Activity, 
   History, 
   ShieldCheck,
-  Zap
+  Zap,
+  Clock
 } from "lucide-react"
 
 const features = [
@@ -22,6 +23,11 @@ const features = [
     title: "Durable Background Execution",
     description: "Run your workflows instantly and reliably. Our resilient execution engine handles retries, timeouts, and long-running tasks without complex deployment pipelines.",
     icon: Zap,
+  },
+  {
+    title: "Scheduled Workflows (Cron)",
+    description: "Automate recurring tasks on your exact schedule. Use standard cron expressions to trigger your headless browser workflows automatically in the background.",
+    icon: Clock,
   },
   {
     title: "Video Session Replays",

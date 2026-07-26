@@ -422,7 +422,12 @@ function RunButton({ workflowId }: { workflowId: string }) {
         startTransition(async () => {
           try {
             const result = await runWorkflowAction({ id: workflowId, graph })
-            if (result === "scheduled") {
+            if (result.error) {
+              toast.error(result.error)
+              return
+            }
+
+            if (result.type === "scheduled") {
               toast.success(
                 "✅ Schedule registered successfully. The workflow will run automatically according to the configured cron expression.",
                 { duration: 5000 }

@@ -88,7 +88,7 @@ export async function runWorkflowAction({
       workflowId: id,
       orgId,
     })
-    throw new Error("This workflow uses premium nodes that require the Pro plan.")
+    return { error: "This workflow uses premium nodes that require the Pro plan." }
   }
 
   try {
@@ -98,7 +98,7 @@ export async function runWorkflowAction({
       workflowId: id,
       orgId,
     })
-    throw error
+    return { error: error instanceof Error ? error.message : "Graph validation failed." }
   }
 
   const triggerNode = graph.nodes.find((n) => n.data.kind === "trigger")
@@ -106,40 +106,51 @@ export async function runWorkflowAction({
   if (triggerNode?.data.type === "schedule") {
     const cron = triggerNode.data.values.cron
     if (!cron) {
-      throw new Error("Schedule node requires a cron expression.")
+      return { error: "Schedule node requires a cron expression." }
     }
 
-    await schedules.create({
-      task: "scheduled-workflow",
-      cron,
-      externalId: `${orgId}|${id}`,
-      deduplicationKey: id,
-    })
+    try {
+      const createdSchedule = await schedules.create({
+        task: "scheduled-workflow",
+        cron,
+        externalId: `${orgId}|${id}`,
+        deduplicationKey: id,
+      })
 
-    Sentry.logger.info("Workflow schedule registered", {
-      workflowId: id,
-      orgId,
-      cron,
-    })
+      Sentry.logger.info("Workflow schedule registered", {
+        workflowId: id,
+        orgId,
+        scheduleId: createdSchedule.id,
+        cron,
+      })
 
-    return "scheduled"
+      return { type: "scheduled" }
+    } catch (error) {
+      Sentry.logger.error("Failed to create schedule", { error })
+      return { error: error instanceof Error ? error.message : "Failed to register schedule with Trigger.dev." }
+    }
   }
 
-  const handle = await tasks.trigger<typeof runWorkflowTask>(
-    "run-workflow",
-    { workflowId: id, orgId },
-    { tags: [`workflow:${id}`] }
-  )
+  try {
+    const handle = await tasks.trigger<typeof runWorkflowTask>(
+      "run-workflow",
+      { workflowId: id, orgId },
+      { tags: [`workflow:${id}`] }
+    )
 
-  Sentry.logger.info("Workflow run triggered", {
-    workflowId: id,
-    orgId,
-    runId: handle.id,
-    nodeCount: graph.nodes.length,
-    hasPremiumNode,
-  })
+    Sentry.logger.info("Workflow run triggered", {
+      workflowId: id,
+      orgId,
+      runId: handle.id,
+      nodeCount: graph.nodes.length,
+      hasPremiumNode,
+    })
 
-  return "run"
+    return { type: "run" }
+  } catch (error) {
+    Sentry.logger.error("Failed to trigger run", { error })
+    return { error: error instanceof Error ? error.message : "Failed to start workflow run." }
+  }
 }
 
 export async function cancelWorkflowRunAction(runId: string) {

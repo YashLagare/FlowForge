@@ -34,7 +34,7 @@ export type RunStep = {
 // sessions) gets layered on from here.
 export const runWorkflowTask = task({
   id: "run-workflow",
-  run: async ({ workflowId, orgId }: { workflowId: string; orgId: string }) => {
+  run: async ({ workflowId, orgId }: { workflowId: string; orgId: string }, { ctx, signal }) => {
     const workflow = await getWorkflow(orgId, workflowId)
     if (!workflow?.graph) throw new Error(`Workflow ${workflowId} has no graph`)
 
@@ -105,65 +105,68 @@ export const runWorkflowTask = task({
     // populated by the time we run it.
     const outputs: NodeOutputs = {}
 
-    for (let i = 0; i < order.length; i++) {
-      const id = order[i]
-      const step = steps[i]
-      const node = byId.get(id)!
-      logger.log(`Running step: ${node.data.title}`)
+    try {
+      for (let i = 0; i < order.length; i++) {
+        signal.throwIfAborted()
 
-      // A node with no executor (the start trigger) does no work and produces no
-      // output — mark it done rather than leaving it "pending", which reads as
-      // skipped forever in the console.
-      const executor = nodeExecutors[node.data.type]
-      if (!executor) {
-        step.status = "done"
-        publishSteps()
-        continue
-      }
+        const id = order[i]
+        const step = steps[i]
+        const node = byId.get(id)!
+        logger.log(`Running step: ${node.data.title}`)
 
-      // Mark running before the executor and flush immediately: the "done" set
-      // below happens before the SDK's next background flush, so without forcing
-      // it here the "running" state is overwritten and the canvas never spins.
-      step.status = "running"
-      publishSteps()
-      await metadata.flush()
+        // A node with no executor (the start trigger) does no work and produces no
+        // output — mark it done rather than leaving it "pending", which reads as
+        // skipped forever in the console.
+        const executor = nodeExecutors[node.data.type]
+        if (!executor) {
+          step.status = "done"
+          publishSteps()
+          continue
+        }
 
-      // Swap {{ nodeId.path }} placeholders for upstream output before running.
-      const values = Object.fromEntries(
-        Object.entries(node.data.values).map(([key, text]) => [
-          key,
-          interpolate({ text, outputs }),
-        ])
-      )
-
-      // Time the executor so the console can show how long the step took, on
-      // both the success and failure paths.
-      const startedAt = Date.now()
-      try {
-        const output = await executor({ values, getStagehand })
-        outputs[id] = output
-        step.output = output
-      } catch (error) {
-        // Flush the "failed" state before the throw unwinds the run: a thrown run
-        // returns no output, so this flushed metadata is the only way the canvas
-        // ever learns which node failed — and the only place its error survives.
-        step.status = "failed"
-        step.durationMs = Date.now() - startedAt
-        step.error = error instanceof Error ? error.message : String(error)
+        // Mark running before the executor and flush immediately: the "done" set
+        // below happens before the SDK's next background flush, so without forcing
+        // it here the "running" state is overwritten and the canvas never spins.
+        step.status = "running"
         publishSteps()
         await metadata.flush()
-        await stagehand?.close()
-        throw error
+
+        // Swap {{ nodeId.path }} placeholders for upstream output before running.
+        const values = Object.fromEntries(
+          Object.entries(node.data.values).map(([key, text]) => [
+            key,
+            interpolate({ text, outputs }),
+          ])
+        )
+
+        // Time the executor so the console can show how long the step took, on
+        // both the success and failure paths.
+        const startedAt = Date.now()
+        try {
+          const output = await executor({ values, getStagehand })
+          outputs[id] = output
+          step.output = output
+        } catch (error) {
+          // Flush the "failed" state before the throw unwinds the run: a thrown run
+          // returns no output, so this flushed metadata is the only way the canvas
+          // ever learns which node failed — and the only place its error survives.
+          step.status = "failed"
+          step.durationMs = Date.now() - startedAt
+          step.error = error instanceof Error ? error.message : String(error)
+          publishSteps()
+          await metadata.flush()
+          throw error
+        }
+
+        step.status = "done"
+        step.durationMs = Date.now() - startedAt
+        publishSteps()
       }
 
-      step.status = "done"
-      step.durationMs = Date.now() - startedAt
-      publishSteps()
+      return { steps, browserbaseSessionId }
+    } finally {
+      await stagehand?.close()
     }
-
-    await stagehand?.close()
-
-    return { steps, browserbaseSessionId }
   },
 })
 

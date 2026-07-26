@@ -121,6 +121,7 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
   // Outputs of every node upstream of the selected one, as insertable {{ }}
   // tokens. Empty when nothing feeds into this node.
   const connections = useUpstreamConnections()
+  const { isPro } = useProPlan()
   // The field a clicked chip inserts into — whichever was focused most recently.
   // Reset per selected node since this component is keyed by node id.
   const [activeFieldKey, setActiveFieldKey] = useState<string | null>(null)
@@ -199,8 +200,8 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
             size="sm"
             className="w-full"
             onClick={() => {
-              if (node.data.kind === "trigger") {
-                toast.error("You cannot delete the trigger node.")
+              if (node.data.kind === "trigger" && !isPro) {
+                toast.error("Free plans only support the Start trigger.")
                 return
               }
               deleteElements({ nodes: [{ id: node.id }] })
@@ -231,7 +232,7 @@ const definitions = Object.values(nodeRegistry)
 // Node types that only orgs on the Pro plan can add. The Agent and Send Email nodes
 // are gated as premium; every other node stays free to keep workflow
 // building open to everyone.
-const premiumNodes = new Set<NodeType>(["agent", "send-email"])
+const premiumNodes = new Set<NodeType>(["agent", "send-email", "schedule"])
 
 // The Toolbar tab: a button per node type that adds it to the canvas.
 function Palette() {

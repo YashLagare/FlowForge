@@ -1,7 +1,7 @@
 "use client"
 
 import { useReactFlow, useStore } from "@xyflow/react"
-import { Lock, MoreHorizontal, Play, Square, Trash2 } from "lucide-react"
+import { Lock, MoreHorizontal, Play, Square, Trash2, Timer } from "lucide-react"
 import { useState, useTransition } from "react"
 import { toast } from "sonner"
 
@@ -381,6 +381,7 @@ function RunButton({ workflowId }: { workflowId: string }) {
   // The run in flight, if any. At most one is live at a time, so its presence
   // decides which mode the button is in.
   const liveRun = useLiveRun()
+  const isScheduled = getNodes().some((n) => n.data.type === "schedule")
 
   if (liveRun) {
     return (
@@ -418,12 +419,22 @@ function RunButton({ workflowId }: { workflowId: string }) {
         }
 
         startTransition(async () => {
-          await runWorkflowAction({ id: workflowId, graph })
+          try {
+            const result = await runWorkflowAction({ id: workflowId, graph })
+            if (result === "scheduled") {
+              toast.success(
+                "✅ Schedule registered successfully. The workflow will run automatically according to the configured cron expression.",
+                { duration: 5000 }
+              )
+            }
+          } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to run workflow")
+          }
         })
       }}
     >
-      <Play fill="primary" />
-      Run
+      {isScheduled ? <Timer /> : <Play fill="primary" />}
+      {isScheduled ? "Save Schedule" : "Run"}
     </Button>
   )
 }

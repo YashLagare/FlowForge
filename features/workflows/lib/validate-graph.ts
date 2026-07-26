@@ -10,7 +10,7 @@ export function validateGraph({ nodes, edges }: WorkflowGraph): string[] {
 
   const triggers = nodes.filter((n) => n.data.kind === "trigger").length
   if (triggers !== 1) {
-    problems.push(`A workflow needs exactly one Start trigger (found ${triggers}).`)
+    problems.push(`A workflow needs exactly one trigger (Start or Schedule). Found ${triggers}.`)
   }
 
   // The runner only executes nodes touching an edge, so with none Run is a no-op.

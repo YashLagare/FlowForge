@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server"
 import * as Sentry from "@sentry/nextjs"
-import { runs, tasks } from "@trigger.dev/sdk"
+import { runs, tasks, schedules } from "@trigger.dev/sdk"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
@@ -99,6 +99,30 @@ export async function runWorkflowAction({
     throw error
   }
 
+  const triggerNode = graph.nodes.find((n) => n.data.kind === "trigger")
+
+  if (triggerNode?.data.type === "schedule") {
+    const cron = triggerNode.data.values.cron
+    if (!cron) {
+      throw new Error("Schedule node requires a cron expression.")
+    }
+
+    await schedules.create({
+      task: "scheduled-workflow",
+      cron,
+      externalId: `${orgId}|${id}`,
+      deduplicationKey: id,
+    })
+
+    Sentry.logger.info("Workflow schedule registered", {
+      workflowId: id,
+      orgId,
+      cron,
+    })
+
+    return "scheduled"
+  }
+
   const handle = await tasks.trigger<typeof runWorkflowTask>(
     "run-workflow",
     { workflowId: id, orgId },
@@ -113,7 +137,7 @@ export async function runWorkflowAction({
     hasPremiumNode,
   })
 
-  return handle
+  return "run"
 }
 
 export async function cancelWorkflowRunAction(runId: string) {

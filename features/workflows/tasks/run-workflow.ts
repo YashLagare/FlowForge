@@ -1,5 +1,5 @@
 import toposort from "toposort"
-import { logger, metadata, task } from "@trigger.dev/sdk"
+import { logger, metadata, task, schedules, tasks } from "@trigger.dev/sdk"
 import type { DeserializedJson } from "@trigger.dev/core"
 import { Stagehand } from "@browserbasehq/stagehand"
 import { nodeExecutors } from "@/features/workflows/nodes/node-executors"
@@ -164,5 +164,32 @@ export const runWorkflowTask = task({
     await stagehand?.close()
 
     return { steps, browserbaseSessionId }
+  },
+})
+
+// Triggered by dynamic imperative schedules created when a user saves a workflow
+// with a Schedule trigger node. It unpacks the orgId and workflowId from the
+// externalId and triggers the actual run-workflow task.
+export const scheduledWorkflowTask = schedules.task({
+  id: "scheduled-workflow",
+  run: async (payload) => {
+    if (!payload.externalId) {
+      throw new Error("Missing externalId in schedule payload")
+    }
+
+    // externalId is formatted as orgId|workflowId
+    const [orgId, workflowId] = payload.externalId.split("|")
+    if (!orgId || !workflowId) {
+      throw new Error(`Invalid externalId format: ${payload.externalId}`)
+    }
+
+    logger.log("Triggering scheduled workflow", { orgId, workflowId })
+
+    // Trigger the actual workflow runner
+    await tasks.trigger<typeof runWorkflowTask>(
+      "run-workflow",
+      { workflowId, orgId },
+      { tags: [`workflow:${workflowId}`, "scheduled"] }
+    )
   },
 })

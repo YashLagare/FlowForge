@@ -7,6 +7,7 @@ import {
   MousePointerClick,
   Pointer,
   ScanText,
+  Timer,
   type LucideIcon,
 } from "lucide-react"
 
@@ -47,6 +48,22 @@ export const nodeRegistry = {
     accent: "bg-blue-500 text-white",
     fields: [],
     outputs: [],
+  },
+  schedule: {
+    type: "schedule",
+    kind: "trigger",
+    label: "Schedule",
+    icon: Timer,
+    accent: "bg-pink-500 text-white",
+    fields: [
+      {
+        key: "cron",
+        label: "Cron Expression",
+        placeholder: "0 9 * * *",
+        required: true,
+      },
+    ],
+    outputs: [{ path: "timestamp", label: "Scheduled Time" }],
   },
   "open-url": {
     type: "open-url",

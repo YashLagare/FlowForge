@@ -28,6 +28,7 @@ import {
   cancelWorkflowRunAction,
   deleteWorkflowAction,
   runWorkflowAction,
+  deleteScheduleAction,
 } from "@/features/workflows/actions"
 import { NodeIcon } from "@/features/workflows/components/node-icon"
 import { useLiveRun } from "@/features/workflows/components/workflow-runs-provider"
@@ -406,6 +407,71 @@ function RunButton({ workflowId }: { workflowId: string }) {
     )
   }
 
+  if (isScheduled) {
+    return (
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+          disabled={isPending}
+          onClick={() => {
+            startTransition(async () => {
+              try {
+                const result = await deleteScheduleAction(workflowId)
+                if (result.error) {
+                  toast.error(result.error)
+                } else {
+                  toast.success("Schedule deactivated successfully.", { duration: 4000 })
+                }
+              } catch (error) {
+                toast.error("Failed to deactivate schedule.")
+              }
+            })
+          }}
+        >
+          <Square className="mr-1 h-4 w-4 fill-current" />
+          Stop Schedule
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={isPending}
+          onClick={() => {
+            const graph = { nodes: getNodes(), edges: getEdges() }
+            const problems = validateGraph(graph)
+            if (problems.length > 0) {
+              toast.error(problems[0])
+              return
+            }
+
+            startTransition(async () => {
+              try {
+                const result = await runWorkflowAction({ id: workflowId, graph })
+                if (result.error) {
+                  toast.error(result.error)
+                  return
+                }
+
+                if (result.type === "scheduled") {
+                  toast.success(
+                    "✅ Schedule registered successfully. The workflow will run automatically according to the configured cron expression.",
+                    { duration: 5000 }
+                  )
+                }
+              } catch (error) {
+                toast.error(error instanceof Error ? error.message : "Failed to run workflow")
+              }
+            })
+          }}
+        >
+          <Timer className="mr-1 h-4 w-4" />
+          Save Schedule
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <Button
       size="sm"
@@ -426,21 +492,14 @@ function RunButton({ workflowId }: { workflowId: string }) {
               toast.error(result.error)
               return
             }
-
-            if (result.type === "scheduled") {
-              toast.success(
-                "✅ Schedule registered successfully. The workflow will run automatically according to the configured cron expression.",
-                { duration: 5000 }
-              )
-            }
           } catch (error) {
             toast.error(error instanceof Error ? error.message : "Failed to run workflow")
           }
         })
       }}
     >
-      {isScheduled ? <Timer /> : <Play fill="primary" />}
-      {isScheduled ? "Save Schedule" : "Run"}
+      <Play className="mr-1 h-4 w-4 fill-primary" />
+      Run
     </Button>
   )
 }

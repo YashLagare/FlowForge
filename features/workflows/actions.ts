@@ -167,3 +167,24 @@ export async function cancelWorkflowRunAction(runId: string) {
 
   Sentry.logger.info("Workflow run cancelled", { runId, orgId })
 }
+
+export async function deleteScheduleAction(workflowId: string) {
+  const { orgId } = await auth()
+  if (!orgId) throw new Error("No active organization")
+
+  try {
+    const list = await schedules.list()
+    const schedule = list.data.find((s) => s.externalId === `${orgId}|${workflowId}`)
+    
+    if (schedule) {
+      await schedules.del(schedule.id)
+      Sentry.logger.info("Schedule deleted", { workflowId, orgId, scheduleId: schedule.id })
+      return { success: true }
+    } else {
+      return { error: "No active schedule found for this workflow." }
+    }
+  } catch (error) {
+    Sentry.logger.error("Failed to delete schedule", { error })
+    return { error: error instanceof Error ? error.message : "Failed to delete schedule." }
+  }
+}

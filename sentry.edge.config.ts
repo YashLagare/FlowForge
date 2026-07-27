@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/nextjs"
 Sentry.init({
   dsn:
     process.env.SENTRY_DSN ??
-    "https://823c7538ac0e5e4e897b0933bfc0eaf4@o4511411455262720.ingest.us.sentry.io/4511724384354304",
+    "https://edba579c312280b11a2432652125905a@o4510505987145728.ingest.us.sentry.io/4511745588264960",
 
   tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
 

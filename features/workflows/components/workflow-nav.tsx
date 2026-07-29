@@ -69,7 +69,7 @@ export function WorkflowNav({ workflows, onCreateWorkflow, isPro = false }: Work
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button asChild className="w-full">
+          <Button asChild className="w-full" onClick={() => setShowUpgradeDialog(false)}>
             <Link href="/billing">Unlock Pro</Link>
           </Button>
         </DialogFooter>

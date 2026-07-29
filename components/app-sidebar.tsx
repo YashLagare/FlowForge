@@ -1,15 +1,10 @@
-import * as React from "react"
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
 import { auth } from "@clerk/nextjs/server"
-import { Sparkles } from "lucide-react"
+import { Cable, Sparkles } from "lucide-react"
+import Link from "next/link"
+import * as React from "react"
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -17,8 +12,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 import { UpgradeButton } from "@/components/upgrade-button"
 import { createWorkflowAction } from "@/features/workflows/actions"
 import { WorkflowNav } from "@/features/workflows/components/workflow-nav"
@@ -49,6 +52,17 @@ export async function AppSidebar({
         <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent>
+        <SidebarMenu className="px-2 mt-4">
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/connections">
+                <Cable className="h-4 w-4" />
+                <span>Connections</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+
         <WorkflowNav
           workflows={workflows}
           onCreateWorkflow={createWorkflowAction}
@@ -62,7 +76,7 @@ export async function AppSidebar({
                   Upgrade to Pro
                 </CardTitle>
                 <CardDescription className="text-xs leading-relaxed">
-                  Unlock premium nodes (Agent, Send Email), session replays, unlimited workflows, and real-time collaboration with your team.
+                  Unlock premium nodes (Agent, Send Email, Google Sheets), session replays, unlimited workflows, and real-time collaboration with your team.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 pt-2">
@@ -86,11 +100,10 @@ export async function AppSidebar({
           />
           <Badge
             variant="secondary"
-            className={`pointer-events-none shrink-0 group-data-[collapsible=icon]:hidden ${
-              isPro
+            className={`pointer-events-none shrink-0 group-data-[collapsible=icon]:hidden ${isPro
                 ? "bg-amber-500/10 text-amber-600 hover:bg-amber-500/20"
                 : "bg-blue-500/10 text-blue-600 hover:bg-blue-500/20"
-            }`}
+              }`}
           >
             {isPro ? "Pro Plan" : "Free Plan"}
           </Badge>

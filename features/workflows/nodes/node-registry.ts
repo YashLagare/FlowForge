@@ -8,6 +8,7 @@ import {
   Pointer,
   ScanText,
   Timer,
+  Table,
   type LucideIcon,
 } from "lucide-react"
 
@@ -17,6 +18,9 @@ export type StepNodeKind = "trigger" | "action"
 export type NodeField = {
   key: string
   label: string
+  type?: "text" | "select" | "key-value"
+  options?: { label: string; value: string }[] // For static selects
+  provider?: string // To fetch dynamic connections for this provider
   placeholder?: string
   // Render as a multi-line textarea instead of a single-line input.
   multiline?: boolean
@@ -177,6 +181,33 @@ export const nodeRegistry = {
       },
     ],
     outputs: [{ path: "id", label: "Email ID" }],
+  },
+  "google-sheets": {
+    type: "google-sheets",
+    kind: "action",
+    label: "Google Sheets",
+    icon: Table,
+    accent: "bg-green-600 text-white",
+    fields: [
+      {
+        key: "connectionId",
+        label: "Connection",
+        type: "select",
+        provider: "google-sheets",
+        required: true,
+      },
+      {
+        key: "operation",
+        label: "Operation",
+        type: "select",
+        options: [{ label: "Append Row", value: "append-row" }],
+        required: true,
+      },
+      { key: "spreadsheetId", label: "Spreadsheet ID", placeholder: "1BxiMVs0XRA5nFMdKv...", required: true },
+      { key: "sheetName", label: "Sheet Name", placeholder: "Sheet1", required: true },
+      { key: "values", label: "Values", type: "key-value", required: true },
+    ],
+    outputs: [{ path: "success", label: "Success" }],
   },
 } satisfies Record<string, NodeDefinition>
 

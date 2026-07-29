@@ -111,13 +111,56 @@ export default function LearnMorePage() {
         </div>
       </div>
 
-      {/* PHASE 4: EXECUTION */}
-      <div className="mb-10">
-        <h2 className="text-3xl font-extrabold border-b pb-4 mb-10 text-foreground">Phase 4: Execution & Monitoring</h2>
+      {/* PHASE 4: INTEGRATIONS */}
+      <div className="mb-20">
+        <h2 className="text-3xl font-extrabold border-b pb-4 mb-10 text-foreground">Phase 4: Third-Party Integrations</h2>
         <div className="space-y-12">
           
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">8</div>
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl font-bold">8</div>
+            <div>
+              <h3 className="text-2xl font-semibold mb-3">Connecting Google Sheets</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                FlowForge can push extracted data directly to your external tools. To set up Google Sheets, you need a Google Service Account:
+              </p>
+              <ol className="list-decimal list-inside space-y-2 text-muted-foreground mb-6 ml-2">
+                <li>Create a new Project in the Google Cloud Console.</li>
+                <li>Enable the <strong>Google Sheets API</strong> for your project.</li>
+                <li>Go to <strong>Credentials</strong> and create a new <strong>Service account</strong>.</li>
+                <li>Open the Service Account, go to the <strong>Keys</strong> tab, and create a new <strong>JSON</strong> key.</li>
+                <li>Go to the <a href="/connections" className="text-primary hover:underline">Connections Dashboard</a> in FlowForge, create a Google Sheets connection, and paste the entire JSON file contents.</li>
+              </ol>
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mb-4">
+                <p className="text-amber-700 dark:text-amber-400 font-medium text-sm">
+                  <strong>Crucial Step:</strong> You must share your target Google Spreadsheet with the `client_email` address found inside your Service Account JSON (grant it Editor access). Otherwise, FlowForge will be blocked from editing your sheet!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl font-bold">9</div>
+            <div>
+              <h3 className="text-2xl font-semibold mb-3">Using the Google Sheets Node</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                Drag the Google Sheets node onto your canvas. Select your configured Connection, enter the Spreadsheet ID (found in the sheet URL), and type the Sheet Name.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Using the Key-Value mapping tool, map your spreadsheet columns to your extracted variables. For example, if you want the `Company` column in your spreadsheet to contain the extracted company name, map the key `Company` to the value `{"{{"}extract.company{"}}"}`. The node will automatically find the right columns in your sheet and append the row!
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* PHASE 5: EXECUTION */}
+      <div className="mb-10">
+        <h2 className="text-3xl font-extrabold border-b pb-4 mb-10 text-foreground">Phase 5: Execution & Monitoring</h2>
+        <div className="space-y-12">
+          
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">10</div>
             <div>
               <h3 className="text-2xl font-semibold mb-3">Execute in the Background</h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -127,7 +170,7 @@ export default function LearnMorePage() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">9</div>
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">11</div>
             <div>
               <h3 className="text-2xl font-semibold mb-3">Watch Video Session Replays</h3>
               <p className="text-muted-foreground leading-relaxed">

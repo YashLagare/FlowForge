@@ -66,6 +66,7 @@ export async function AppSidebar({
         <WorkflowNav
           workflows={workflows}
           onCreateWorkflow={createWorkflowAction}
+          isPro={isPro}
         />
         {!isPro && (
           <div className="mt-auto p-4 group-data-[collapsible=icon]:hidden">

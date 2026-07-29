@@ -42,6 +42,10 @@ const faqs = [
     question: "Can my team collaborate in real-time?",
     answer: "Yes! On the Pro plan, multiple team members can view and edit the same workflow simultaneously, similar to Figma or Google Docs.",
   },
+  {
+    question: "How do third-party connections work?",
+    answer: "FlowForge allows you to seamlessly integrate with tools like Google Sheets. We use a secure central Connections Manager that stores your Service Account credentials using AES-256-CBC encryption at rest. These credentials are only decrypted at runtime within a secure worker sandbox, ensuring your external data remains completely private and secure.",
+  },
 ]
 
 export function FaqSection() {

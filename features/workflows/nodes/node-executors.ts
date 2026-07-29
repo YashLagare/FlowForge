@@ -10,8 +10,10 @@ import { extract } from "./extract"
 import { observe } from "./observe"
 import { openUrl } from "./open-url"
 import { sendEmail } from "./send-email"
+import { googleSheets } from "./google-sheets"
 
 export type NodeContext = {
+  orgId: string
   values: Record<string, string>
   getStagehand: () => Promise<Stagehand>
 }
@@ -31,4 +33,13 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
     agent({ stagehand: await getStagehand(), instruction: values.instruction }),
   "send-email": async ({ values }) =>
     sendEmail({ to: values.to, subject: values.subject, body: values.body }),
+  "google-sheets": async ({ orgId, values }) =>
+    googleSheets({
+      orgId,
+      connectionId: values.connectionId,
+      operation: values.operation,
+      spreadsheetId: values.spreadsheetId,
+      sheetName: values.sheetName,
+      mappedValues: values.values,
+    }),
 } satisfies Record<ActionNodeType, NodeExecutor>

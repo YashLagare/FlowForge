@@ -18,7 +18,7 @@ export default defineConfig({
       randomize: true,
     },
   },
-  dirs: ["features"],
+  dirs: ["features/workflows/tasks"],
   build: {
     extensions: [
       esbuildPlugin(

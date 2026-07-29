@@ -5,7 +5,8 @@ import {
   History, 
   ShieldCheck,
   Zap,
-  Clock
+  Clock,
+  Cable
 } from "lucide-react"
 
 const features = [
@@ -43,6 +44,11 @@ const features = [
     title: "Enterprise-Grade Security",
     description: "Multi-tenant organization workspaces, granular Role-Based Access Control (RBAC), and secure execution sandboxing ensure your data stays private and secure.",
     icon: ShieldCheck,
+  },
+  {
+    title: "Seamless Integrations",
+    description: "Connect securely to external services like Google Sheets. Our central Connections manager encrypts your credentials at rest and injects them securely at runtime.",
+    icon: Cable,
   },
 ]
 

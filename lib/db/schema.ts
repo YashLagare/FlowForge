@@ -18,3 +18,15 @@ export const workflows = pgTable("workflows", {
 })
 
 export type Workflow = typeof workflows.$inferSelect
+
+export const connections = pgTable("connections", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orgId: text("org_id").notNull(),
+  name: text("name").notNull(),
+  provider: text("provider").notNull(), // e.g., 'google-sheets'
+  encryptedData: text("encrypted_data").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
+export type Connection = typeof connections.$inferSelect

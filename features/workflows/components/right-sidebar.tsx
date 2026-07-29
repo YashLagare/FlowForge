@@ -2,8 +2,9 @@
 
 import { useReactFlow, useStore } from "@xyflow/react"
 import { Lock, MoreHorizontal, Play, Square, Trash2, Timer } from "lucide-react"
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect } from "react"
 import { toast } from "sonner"
+import { getConnectionsByProviderAction } from "@/features/connections/actions"
 
 import {
   Accordion,
@@ -23,6 +24,13 @@ import { Label } from "@/components/ui/label"
 import { ResizablePanel } from "@/components/ui/resizable"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 import {
   cancelWorkflowRunAction,
@@ -93,6 +101,108 @@ function Field({
   // field a clicked token should land in.
   onFocus: () => void
 }) {
+  const [connections, setConnections] = useState<{ id: string; name: string }[]>([])
+
+  useEffect(() => {
+    if (field.type === "select" && field.provider) {
+      getConnectionsByProviderAction(field.provider).then(setConnections)
+    }
+  }, [field])
+
+  if (field.type === "select") {
+    return (
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger onFocus={onFocus} className="w-full">
+          <SelectValue placeholder={field.placeholder ?? "Select an option..."} />
+        </SelectTrigger>
+        <SelectContent>
+          {field.options?.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+          {field.provider && connections.length === 0 && (
+            <SelectItem value="none" disabled>
+              No connections found
+            </SelectItem>
+          )}
+          {field.provider &&
+            connections.map((conn) => (
+              <SelectItem key={conn.id} value={conn.id}>
+                {conn.name}
+              </SelectItem>
+            ))}
+        </SelectContent>
+      </Select>
+    )
+  }
+
+  if (field.type === "key-value") {
+    // Parse value as JSON array of { key, value } pairs for editing.
+    // If empty or invalid, fallback to empty array.
+    let pairs: { key: string; value: string }[] = []
+    try {
+      if (value) pairs = JSON.parse(value)
+    } catch {
+      pairs = []
+    }
+
+    const updatePairs = (newPairs: typeof pairs) => {
+      onChange(JSON.stringify(newPairs))
+    }
+
+    return (
+      <div className="flex flex-col gap-2 rounded-md border border-border p-2" onFocus={onFocus}>
+        {pairs.map((pair, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <Input
+              placeholder="Column"
+              value={pair.key}
+              className="h-8 text-xs font-mono"
+              onChange={(e) => {
+                const newPairs = [...pairs]
+                newPairs[i].key = e.target.value
+                updatePairs(newPairs)
+              }}
+            />
+            <Input
+              placeholder="Value"
+              value={pair.value}
+              className="h-8 text-xs font-mono"
+              onChange={(e) => {
+                const newPairs = [...pairs]
+                newPairs[i].value = e.target.value
+                updatePairs(newPairs)
+              }}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10"
+              onClick={() => {
+                const newPairs = [...pairs]
+                newPairs.splice(i, 1)
+                updatePairs(newPairs)
+              }}
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
+        ))}
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 w-full text-xs"
+          onClick={() => {
+            updatePairs([...pairs, { key: "", value: "" }])
+          }}
+        >
+          + Add Column
+        </Button>
+      </div>
+    )
+  }
+
   if (field.multiline) {
     return (
       <Textarea
@@ -233,7 +343,7 @@ const definitions = Object.values(nodeRegistry)
 // Node types that only orgs on the Pro plan can add. The Agent and Send Email nodes
 // are gated as premium; every other node stays free to keep workflow
 // building open to everyone.
-const premiumNodes = new Set<NodeType>(["agent", "send-email", "schedule"])
+const premiumNodes = new Set<NodeType>(["agent", "send-email", "schedule", "google-sheets"])
 
 // The Toolbar tab: a button per node type that adds it to the canvas.
 function Palette() {
@@ -551,7 +661,7 @@ export function RightSidebar({ workflowId }: { workflowId: string }) {
       groupResizeBehavior="preserve-pixel-size"
     >
       <Tabs value={tab} onValueChange={setTab} className="size-full gap-0">
-        <div className="flex items-center justify-between border-b border-border p-2">
+        <div className="flex flex-wrap items-center justify-between border-b border-border p-2 gap-2">
           <ActionsMenu workflowId={workflowId} />
           <RunButton workflowId={workflowId} />
         </div>

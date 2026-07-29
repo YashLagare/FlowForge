@@ -99,7 +99,7 @@ function Field({
   onChange: (value: string) => void
   // Fires when the field gains focus, so the Connections chips know which
   // field a clicked token should land in.
-  onFocus: () => void
+  onFocus: (subFieldPath?: string) => void
 }) {
   const [connections, setConnections] = useState<{ id: string; name: string }[]>([])
 
@@ -112,7 +112,7 @@ function Field({
   if (field.type === "select") {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger onFocus={onFocus} className="w-full">
+        <SelectTrigger onFocus={() => onFocus()} className="w-full">
           <SelectValue placeholder={field.placeholder ?? "Select an option..."} />
         </SelectTrigger>
         <SelectContent>
@@ -152,13 +152,14 @@ function Field({
     }
 
     return (
-      <div className="flex flex-col gap-2 rounded-md border border-border p-2" onFocus={onFocus}>
+      <div className="flex flex-col gap-2 rounded-md border border-border p-2">
         {pairs.map((pair, i) => (
           <div key={i} className="flex items-center gap-2">
             <Input
               placeholder="Column"
               value={pair.key}
               className="h-8 text-xs font-mono"
+              onFocus={() => onFocus(`${i}.key`)}
               onChange={(e) => {
                 const newPairs = [...pairs]
                 newPairs[i].key = e.target.value
@@ -169,6 +170,7 @@ function Field({
               placeholder="Value"
               value={pair.value}
               className="h-8 text-xs font-mono"
+              onFocus={() => onFocus(`${i}.value`)}
               onChange={(e) => {
                 const newPairs = [...pairs]
                 newPairs[i].value = e.target.value
@@ -209,7 +211,7 @@ function Field({
         id={field.key}
         value={value}
         placeholder={field.placeholder}
-        onFocus={onFocus}
+        onFocus={() => onFocus()}
         onChange={(e) => onChange(e.target.value)}
       />
     )
@@ -220,7 +222,7 @@ function Field({
       id={field.key}
       value={value}
       placeholder={field.placeholder}
-      onFocus={onFocus}
+      onFocus={() => onFocus()}
       onChange={(e) => onChange(e.target.value)}
     />
   )
@@ -236,6 +238,7 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
   // The field a clicked chip inserts into — whichever was focused most recently.
   // Reset per selected node since this component is keyed by node id.
   const [activeFieldKey, setActiveFieldKey] = useState<string | null>(null)
+  const [activeSubField, setActiveSubField] = useState<string | null>(null)
 
   if (!node) {
     return (
@@ -253,6 +256,34 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
 
   const insertToken = (token: string) => {
     if (!targetKey) return
+
+    const fieldDef = def.fields.find((f) => f.key === targetKey)
+    if (fieldDef?.type === "key-value") {
+      let pairs: { key: string; value: string }[] = []
+      try {
+        if (values[targetKey]) pairs = JSON.parse(values[targetKey])
+      } catch {}
+
+      if (activeSubField) {
+        const [indexStr, prop] = activeSubField.split(".")
+        const index = parseInt(indexStr, 10)
+        if (pairs[index]) {
+          pairs[index][prop as "key" | "value"] += token
+        }
+      } else {
+        if (pairs.length > 0) {
+          pairs[pairs.length - 1].value += token
+        } else {
+          pairs.push({ key: "", value: token })
+        }
+      }
+
+      updateNodeData(node.id, {
+        values: { ...values, [targetKey]: JSON.stringify(pairs) },
+      })
+      return
+    }
+
     updateNodeData(node.id, {
       values: { ...values, [targetKey]: (values[targetKey] ?? "") + token },
     })
@@ -273,7 +304,10 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
               <Field
                 field={field}
                 value={values[field.key] ?? ""}
-                onFocus={() => setActiveFieldKey(field.key)}
+                onFocus={(subFieldPath) => {
+                  setActiveFieldKey(field.key)
+                  setActiveSubField(subFieldPath ?? null)
+                }}
                 onChange={(value) => {
                   updateNodeData(node.id, {
                     values: { ...values, [field.key]: value },

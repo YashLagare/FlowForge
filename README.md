@@ -219,7 +219,7 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 - **Dependencies:** `@trigger.dev/sdk`, `@browserbasehq/stagehand`.
 
 **Plan-Based Feature Gating**
-- **Purpose:** Restrict premium features (e.g., AI Agent nodes, Schedule nodes) to paid users.
+- **Purpose:** Restrict premium features (e.g., AI Agent nodes, Schedule nodes, Google Sheets nodes) and limit workflow creation (Free tier limited to 2 workflows) to drive paid conversions.
 - **Business Value:** Drives monetization and covers infrastructure costs for intensive background tasks.
 - **Main Components:** Clerk billing entitlements (`has({ plan: "pro" })`).
 - **Dependencies:** `@clerk/nextjs`.
@@ -264,21 +264,33 @@ The application uses a serverless Postgres database to store canonical state, wh
 - `created_at` (timestamp, Not Null): Creation time.
 - `updated_at` (timestamp, Not Null): Last updated time.
 
+### Table: `connections`
+**Purpose:** Securely stores encrypted third-party credentials (e.g., Google Service Accounts).
+**Fields:**
+- `id` (uuid, Primary Key): Unique identifier for the connection.
+- `org_id` (text, Not Null): The Clerk Organization ID this connection belongs to.
+- `type` (text, Not Null): The integration type (e.g., `google-sheets`).
+- `name` (text, Not Null): Human-readable name for the connection.
+- `encrypted_credentials` (text, Not Null): AES-256-CBC encrypted JSON string of credentials.
+- `created_at` (timestamp, Not Null): Creation time.
+- `updated_at` (timestamp, Not Null): Last updated time.
+
 ---
 
 ## 9 Entity Relationship Diagram
 
 ```text
-+-----------------------+
-| workflows             |
-+-----------------------+
-| id (PK) - UUID        |
-| org_id (FK*) - TEXT   |
-| name - TEXT           |
-| graph - JSONB         |
-| created_at - TIMESTAMP|
-| updated_at - TIMESTAMP|
-+-----------------------+
++-----------------------+        +-----------------------+
+| workflows             |        | connections           |
++-----------------------+        +-----------------------+
+| id (PK) - UUID        |        | id (PK) - UUID        |
+| org_id (FK*) - TEXT   |        | org_id (FK*) - TEXT   |
+| name - TEXT           |        | type - TEXT           |
+| graph - JSONB         |        | name - TEXT           |
+| created_at - TIMESTAMP|        | encrypted_credentials |
+| updated_at - TIMESTAMP|        | created_at - TIMESTAMP|
++-----------------------+        | updated_at - TIMESTAMP|
+                                 +-----------------------+
 * org_id maps to Clerk's Organization ID (external).
 ```
 
@@ -378,6 +390,7 @@ The application uses a serverless Postgres database to store canonical state, wh
 | `NEXT_PUBLIC_SENTRY_DSN` | Yes | Sentry DSN for client-side tracking. |
 | `SENTRY_DSN` | Yes | Sentry DSN for server-side tracking. |
 | `SENTRY_AUTH_TOKEN` | Yes | Used during build for sourcemap uploads. |
+| `ENCRYPTION_KEY` | Yes | 64-character hex string for AES-256-CBC encryption of integration credentials. |
 
 ---
 

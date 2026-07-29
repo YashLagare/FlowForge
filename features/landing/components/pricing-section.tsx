@@ -25,7 +25,7 @@ export function PricingSection() {
             </div>
             <ul className="space-y-4 mb-8 flex-1">
               {[
-                "Unlimited Durable Workflows",
+                "2 Durable Workflows",
                 "Core Browser Actions & Triggers",
                 "Community Support",
                 "Standard Execution Logs",

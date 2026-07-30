@@ -241,7 +241,8 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 <img width="1917" height="907" alt="4join-invitationORCreateOrg" src="https://github.com/user-attachments/assets/f570d3bd-3766-4efc-97ad-df14ab7c9582" />
 
 
-<img width="1917" height="907" alt="5dashboardPage" src="https://github.com/user-attachments/assets/7f61b1c9-a0ce-4f61-a249-e060ef0bfc1f" />
+<img width="1917" height="913" alt="image" src="https://github.com/user-attachments/assets/dd444230-4bbc-4c2e-b43d-191fbdd59ced" />
+
 
 
 <img width="1911" height="897" alt="dashbord collabration-shows" src="https://github.com/user-attachments/assets/889905f9-2d8c-4920-8d5a-273e537ca1a0" />

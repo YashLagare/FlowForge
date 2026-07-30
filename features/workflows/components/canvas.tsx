@@ -9,6 +9,7 @@ import {
     Panel,
     ReactFlow,
     type ColorMode,
+    type Connection,
     type Edge,
 } from "@xyflow/react";
 import { useSyncExternalStore } from "react";
@@ -64,6 +65,11 @@ export function Canvas() {
     edges: { initial: initialEdges },
   })
 
+  const onReconnect = (oldEdge: Edge, newConnection: Connection) => {
+    onDelete({ nodes: [], edges: [oldEdge] })
+    onConnect(newConnection)
+  }
+
   return (
     <div className="size-full">
       <ReactFlow
@@ -74,6 +80,7 @@ export function Canvas() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onDelete={onDelete}
+        onReconnect={onReconnect}
         colorMode={colorMode}
         fitView
         connectionLineType={ConnectionLineType.SmoothStep}

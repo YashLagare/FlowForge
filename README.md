@@ -220,7 +220,7 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 - **Dependencies:** `@trigger.dev/sdk`, `@browserbasehq/stagehand`.
 
 **Plan-Based Feature Gating**
-- **Purpose:** Restrict premium features (e.g., AI Agent nodes, Schedule nodes, Google Sheets nodes) and limit workflow creation (Free tier limited to 2 workflows) to drive paid conversions.
+- **Purpose:** Restrict premium features (e.g., AI Agent nodes, Schedule nodes, Google Sheets nodes, Wait/Delay nodes) and limit workflow creation (Free tier limited to 2 workflows) to drive paid conversions.
 - **Business Value:** Drives monetization and covers infrastructure costs for intensive background tasks.
 - **Main Components:** Clerk billing entitlements (`has({ plan: "pro" })`).
 - **Dependencies:** `@clerk/nextjs`.

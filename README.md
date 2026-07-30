@@ -245,10 +245,12 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 
 
 
-<img width="1911" height="897" alt="dashbord collabration-shows" src="https://github.com/user-attachments/assets/889905f9-2d8c-4920-8d5a-273e537ca1a0" />
+<img width="1917" height="913" alt="image" src="https://github.com/user-attachments/assets/0789a275-af01-44e6-bbc0-5b334149bff5" />
 
 
-<img width="1902" height="912" alt="pricing -page" src="https://github.com/user-attachments/assets/e82b3663-a4ce-4dab-b206-55859aca5bdb" />
+
+<img width="1901" height="907" alt="image" src="https://github.com/user-attachments/assets/4c03151a-c3c0-4b01-ad00-02101c6d47fa" />
+
 
 ---
 

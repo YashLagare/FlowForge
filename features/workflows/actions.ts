@@ -81,7 +81,12 @@ export async function runWorkflowAction({
   })
 
   const hasPremiumNode = graph.nodes.some(
-    (node) => node.data.type === "agent" || node.data.type === "send-email" || node.data.type === "schedule"
+    (node) =>
+      node.data.type === "agent" ||
+      node.data.type === "send-email" ||
+      node.data.type === "schedule" ||
+      node.data.type === "google-sheets" ||
+      node.data.type === "wait"
   )
   if (hasPremiumNode && !has({ plan: "pro" })) {
     Sentry.logger.warn("Workflow run denied — Premium nodes require Pro plan", {

@@ -377,7 +377,7 @@ const definitions = Object.values(nodeRegistry)
 // Node types that only orgs on the Pro plan can add. The Agent and Send Email nodes
 // are gated as premium; every other node stays free to keep workflow
 // building open to everyone.
-const premiumNodes = new Set<NodeType>(["agent", "send-email", "schedule", "google-sheets"])
+const premiumNodes = new Set<NodeType>(["agent", "send-email", "schedule", "google-sheets", "wait"])
 
 // The Toolbar tab: a button per node type that adds it to the canvas.
 function Palette() {

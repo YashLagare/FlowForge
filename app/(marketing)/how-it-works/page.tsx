@@ -105,6 +105,11 @@ export default function LearnMorePage() {
               <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                 Using standard cron expressions (like <code>0 8 * * 1-5</code> to run every weekday at 8 AM), your workflows will execute automatically in the background on Trigger.dev's durable infrastructure.
               </p>
+
+              <h3 className="text-2xl font-semibold mb-3">Pacing with Wait & Delay Controls</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                Need your flow to pause between actions or avoid web server rate-limits? Drag a <strong>Wait Node</strong> onto the canvas and specify the duration in seconds (or pass dynamic variables like <code>{"{{"}extract.delay{"}}"}</code>). FlowForge will safely hold execution before moving to downstream nodes.
+              </p>
             </div>
           </div>
 

@@ -77,7 +77,7 @@ export async function AppSidebar({
                   Upgrade to Pro
                 </CardTitle>
                 <CardDescription className="text-xs leading-relaxed">
-                  Unlock premium nodes (Agent, Send Email, Google Sheets), session replays, unlimited workflows, and real-time collaboration with your team.
+                  Unlock premium nodes (Agent, Send Email, Schedule, Google Sheets, Wait Delay), session replays, unlimited workflows, and real-time collaboration with your team.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 pt-2">

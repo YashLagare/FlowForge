@@ -3,6 +3,7 @@ import {
   Bot,
   Eye,
   Globe,
+  Hourglass,
   Mail,
   MousePointerClick,
   Pointer,
@@ -208,6 +209,22 @@ export const nodeRegistry = {
       { key: "values", label: "Values", type: "key-value", required: true },
     ],
     outputs: [{ path: "success", label: "Success" }],
+  },
+  wait: {
+    type: "wait",
+    kind: "action",
+    label: "Wait",
+    icon: Hourglass,
+    accent: "bg-amber-500 text-white",
+    fields: [
+      {
+        key: "duration",
+        label: "Wait Duration (seconds)",
+        placeholder: "5",
+        required: true,
+      },
+    ],
+    outputs: [{ path: "waitedSeconds", label: "Waited Seconds" }],
   },
 } satisfies Record<string, NodeDefinition>
 

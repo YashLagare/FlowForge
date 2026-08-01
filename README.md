@@ -213,10 +213,10 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 - **Main Components:** Liveblocks room, presence cursors.
 - **Dependencies:** `@liveblocks/react`, `@liveblocks/node`.
 
-**Workflow Execution Engine**
-- **Purpose:** Run constructed workflows in the background reliably, either triggered manually or on a recurring cron schedule.
-- **Business Value:** Ensures automations execute without tying up the user's browser, handling retries, timeouts, and scheduled automation gracefully.
-- **Main Components:** Server Action `runWorkflowAction`, Trigger.dev task `runWorkflowTask`, Trigger.dev Schedules API.
+**Dynamic Workflow Execution Engine**
+- **Purpose:** Execute visual workflow graphs in the background using a Dynamic Queue Walker that supports branching logic (`If / Else` nodes), conditional path execution, recursive skip propagation, and infinite loop safeguards.
+- **Business Value:** Enables complex, Turing-complete decision-making automations (like n8n, Make, or Zapier) while ensuring reliable background execution without tying up the user's browser.
+- **Main Components:** Trigger.dev task `runWorkflowTask`, `ExecutionContext`, Trigger.dev Schedules API.
 - **Dependencies:** `@trigger.dev/sdk`, `@browserbasehq/stagehand`.
 
 **Plan-Based Feature Gating**

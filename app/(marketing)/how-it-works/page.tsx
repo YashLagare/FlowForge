@@ -110,6 +110,11 @@ export default function LearnMorePage() {
               <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                 Need your flow to pause between actions or avoid web server rate-limits? Drag a <strong>Wait Node</strong> onto the canvas and specify the duration in seconds (or pass dynamic variables like <code>{"{{"}extract.delay{"}}"}</code>). FlowForge will safely hold execution before moving to downstream nodes.
               </p>
+
+              <h3 className="text-2xl font-semibold mb-3">Dynamic Branching with If / Else Nodes</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                Build decision-making logic directly into your workflows. Drag an <strong>If / Else Node</strong> onto the canvas, define an Expression (e.g. <code>{"{{"}extract.price{"}}"}</code>), select an operator (like <em>Less Than</em>, <em>Contains</em>, or <em>Regex</em>), and enter a comparison value. The node features dual handles: <strong>IF TRUE</strong> (solid green) and <strong>IF FALSE</strong> (dashed red). FlowForge's dynamic graph walker will execute only the active branch while cleanly skipping unchosen paths!
+              </p>
             </div>
           </div>
 

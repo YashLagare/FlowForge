@@ -73,12 +73,41 @@ function StepNodeComponent({ id, data, selected }: NodeProps<StepNodeType>) {
         </>
       )}
 
-      <Handle
-        type="source"
-        position={Position.Right}
-        style={{ transform: "translate(100%, -50%)" }}
-        className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-border!"
-      />
+      {type === "if-else" ? (
+        <>
+          <div className="border-t border-border px-3 py-1.5 flex flex-col gap-2 text-[10px] font-bold">
+            <div className="flex items-center justify-end gap-1.5 text-emerald-600 dark:text-emerald-400">
+              <span>IF TRUE</span>
+              <span className="size-2 rounded-full bg-emerald-500 inline-block" />
+            </div>
+            <div className="flex items-center justify-end gap-1.5 text-red-600 dark:text-red-400">
+              <span>IF FALSE</span>
+              <span className="size-2 rounded-full bg-red-500 inline-block" />
+            </div>
+          </div>
+          <Handle
+            type="source"
+            id="true"
+            position={Position.Right}
+            style={{ top: "45%", transform: "translate(100%, -50%)" }}
+            className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-emerald-500!"
+          />
+          <Handle
+            type="source"
+            id="false"
+            position={Position.Right}
+            style={{ top: "85%", transform: "translate(100%, -50%)" }}
+            className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-red-500!"
+          />
+        </>
+      ) : (
+        <Handle
+          type="source"
+          position={Position.Right}
+          style={{ transform: "translate(100%, -50%)" }}
+          className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-border!"
+        />
+      )}
     </div>
   )
 }

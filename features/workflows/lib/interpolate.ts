@@ -28,8 +28,12 @@ export function interpolate({
   text: string
   outputs: NodeOutputs
 }): string {
-  return text.replace(PLACEHOLDER, (_match, expr: string) => {
-    const value = getByPath(outputs, expr.trim())
+  return text.replace(PLACEHOLDER, (_match, rawExpr: string) => {
+    const expr = rawExpr.trim()
+    if (expr === "workflow.timestamp" || expr === "trigger.timestamp") {
+      return new Date().toISOString()
+    }
+    const value = getByPath(outputs, expr)
     if (value == null) return ""
     if (typeof value === "object") return JSON.stringify(value)
     return String(value)

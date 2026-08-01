@@ -1,4 +1,3 @@
-import toposort from "toposort"
 import { logger, metadata, task, schedules, tasks } from "@trigger.dev/sdk"
 import type { DeserializedJson } from "@trigger.dev/core"
 import { Stagehand } from "@browserbasehq/stagehand"
@@ -8,7 +7,8 @@ import {
   type NodeOutputs,
 } from "@/features/workflows/lib/interpolate"
 import { getWorkflow } from "@/features/workflows/data"
-import type { NodeType } from "@/features/workflows/nodes/node-registry"
+import type { NodeType, StepNodeType } from "@/features/workflows/nodes/node-registry"
+import type { Edge } from "@xyflow/react"
 
 // One entry per node the run will walk, published to the run's metadata under
 // "steps" so the canvas — and the run console below it — can watch each node
@@ -19,7 +19,7 @@ export type RunStep = {
   // the console can render a step without re-reading the graph.
   type: NodeType
   title: string
-  status: "pending" | "running" | "done" | "failed"
+  status: "pending" | "running" | "done" | "failed" | "skipped"
   // Wall-clock time the executor took, set once the step leaves "running".
   durationMs?: number
   // Whatever the executor returned, kept for the console's per-step detail view.
@@ -28,10 +28,43 @@ export type RunStep = {
   error?: string
 }
 
-// The Trigger.dev task the Run button fires. It loads the saved graph, works out
-// what order the nodes should run in, and walks them. For now each node just
-// announces itself — real execution (per-node executors, live progress, browser
-// sessions) gets layered on from here.
+// Execution Context holding state, outputs, system variables, and loop safeguards.
+export interface ExecutionContext {
+  workflowId: string
+  orgId: string
+  outputs: NodeOutputs
+  visitCounts: Map<string, number>
+}
+
+// Recursively walks down an unchosen branch to mark downstream nodes as "skipped"
+function markBranchAsSkipped(
+  startNodeId: string,
+  edges: Edge[],
+  stepsMap: Map<string, RunStep>,
+  executedOrQueued: Set<string>
+) {
+  const stack = [startNodeId]
+  const visited = new Set<string>()
+
+  while (stack.length > 0) {
+    const currentId = stack.pop()!
+    if (visited.has(currentId) || executedOrQueued.has(currentId)) continue
+    visited.add(currentId)
+
+    const step = stepsMap.get(currentId)
+    if (step && step.status !== "done" && step.status !== "running") {
+      step.status = "skipped"
+    }
+
+    const outgoing = edges.filter((e) => e.source === currentId)
+    for (const edge of outgoing) {
+      if (!executedOrQueued.has(edge.target)) {
+        stack.push(edge.target)
+      }
+    }
+  }
+}
+
 export const runWorkflowTask = task({
   id: "run-workflow",
   run: async ({ workflowId, orgId }: { workflowId: string; orgId: string }, { ctx, signal }) => {
@@ -41,48 +74,31 @@ export const runWorkflowTask = task({
     const { nodes, edges } = workflow.graph
     const byId = new Map(nodes.map((n) => [n.id, n]))
 
-    // Run only connected nodes — anything touching an edge. Orphans dropped on
-    // the canvas are skipped. toposort orders them and throws on a cycle.
-    const connected = new Set(edges.flatMap((e) => [e.source, e.target]))
-    const order = toposort
-      .array(
-        nodes.map((n) => n.id),
-        edges.map((e) => [e.source, e.target])
-      )
-      .filter((id) => connected.has(id))
+    // Find trigger node or initial root nodes
+    const triggerNode = nodes.find((n) => n.data.kind === "trigger") || nodes[0]
+    if (!triggerNode) return { steps: [], browserbaseSessionId: undefined }
 
-    logger.log(`Running workflow ${workflow.name}`, { steps: order.length })
+    logger.log(`Running workflow ${workflow.name} with dynamic graph walker`, { nodeCount: nodes.length })
 
-    // Seed every step as "pending" up front and publish, so the canvas can render
-    // the full run as a list of spinners before any node starts. type and title
-    // are denormalized from the graph so the console can label each step without
-    // it. We mutate these entries in place and re-publish on every status change.
-    const steps: RunStep[] = order.map((nodeId) => {
-      const node = byId.get(nodeId)!
-      return {
-        nodeId,
+    // Initialize steps map
+    const stepsMap = new Map<string, RunStep>()
+    const steps: RunStep[] = nodes.map((node) => {
+      const step: RunStep = {
+        nodeId: node.id,
         type: node.data.type,
         title: node.data.title,
         status: "pending",
       }
+      stepsMap.set(node.id, step)
+      return step
     })
 
-    // steps carries an arbitrary `output`, which is wider than trigger's
-    // DeserializedJson metadata type; the values are JSON at runtime, so cast at
-    // this one boundary rather than constraining the shape the console reads.
     const publishSteps = () =>
       metadata.set("steps", steps as unknown as DeserializedJson[])
 
     publishSteps()
 
-    // The run owns one Browserbase session, opened lazily on the first browser step
-    // and reused by every later one, so the recording spans the whole flow. The
-    // LLM routes through Browserbase's Model Gateway (BROWSERBASE_API_KEY), so no
-    // separate provider key is needed.
     let stagehand: Stagehand | undefined
-    // The Browserbase session id, captured the moment the session opens so it can
-    // be returned in the run's output — a panel reads it there to fetch the replay
-    // once the run finishes and the recording is available.
     let browserbaseSessionId: string | undefined
     const getStagehand = async () => {
       if (stagehand) return stagehand
@@ -90,9 +106,6 @@ export const runWorkflowTask = task({
         env: "BROWSERBASE",
         apiKey: process.env.BROWSERBASE_API_KEY!,
         model: "google/gemini-2.5-flash",
-        // Pino's logging backend spawns a thread-stream worker (lib/worker.js)
-        // that can't be resolved inside trigger.dev's bundled output. Disable it —
-        // the option exists for exactly these minimal/bundled environments.
         disablePino: true,
       })
       await stagehand.init()
@@ -100,66 +113,107 @@ export const runWorkflowTask = task({
       return stagehand
     }
 
-    // Each node's result, keyed by its id, so later nodes can pull from it.
-    // Because we walk in dependency order, every id a node references is already
-    // populated by the time we run it.
-    const outputs: NodeOutputs = {}
+    // Execution Context
+    const execCtx: ExecutionContext = {
+      workflowId,
+      orgId,
+      outputs: {},
+      visitCounts: new Map(),
+    }
+
+    // Queue for dynamic BFS/DFS walker
+    const queue: string[] = [triggerNode.id]
+    const executedOrQueued = new Set<string>([triggerNode.id])
 
     try {
-      for (let i = 0; i < order.length; i++) {
+      while (queue.length > 0) {
         signal.throwIfAborted()
 
-        const id = order[i]
-        const step = steps[i]
-        const node = byId.get(id)!
-        logger.log(`Running step: ${node.data.title}`)
+        const nodeId = queue.shift()!
+        const step = stepsMap.get(nodeId)!
+        const node = byId.get(nodeId)!
 
-        // A node with no executor (the start trigger) does no work and produces no
-        // output — mark it done rather than leaving it "pending", which reads as
-        // skipped forever in the console.
+        // Cycle Safeguard: Prevent infinite loops
+        const visitCount = (execCtx.visitCounts.get(nodeId) || 0) + 1
+        execCtx.visitCounts.set(nodeId, visitCount)
+        if (visitCount > 100) {
+          throw new Error(
+            `Workflow execution stopped: possible infinite loop detected on node "${node.data.title}".`
+          )
+        }
+
+        logger.log(`Executing step: ${node.data.title} (Visit ${visitCount})`)
+
         const executor = nodeExecutors[node.data.type]
         if (!executor) {
           step.status = "done"
           publishSteps()
-          continue
-        }
-
-        // Mark running before the executor and flush immediately: the "done" set
-        // below happens before the SDK's next background flush, so without forcing
-        // it here the "running" state is overwritten and the canvas never spins.
-        step.status = "running"
-        publishSteps()
-        await metadata.flush()
-
-        // Swap {{ nodeId.path }} placeholders for upstream output before running.
-        const values = Object.fromEntries(
-          Object.entries(node.data.values).map(([key, text]) => [
-            key,
-            interpolate({ text, outputs }),
-          ])
-        )
-
-        // Time the executor so the console can show how long the step took, on
-        // both the success and failure paths.
-        const startedAt = Date.now()
-        try {
-          const output = await executor({ orgId, values, getStagehand })
-          outputs[id] = output
-          step.output = output
-        } catch (error) {
-          // Flush the "failed" state before the throw unwinds the run: a thrown run
-          // returns no output, so this flushed metadata is the only way the canvas
-          // ever learns which node failed — and the only place its error survives.
-          step.status = "failed"
-          step.durationMs = Date.now() - startedAt
-          step.error = error instanceof Error ? error.message : String(error)
+        } else {
+          step.status = "running"
           publishSteps()
           await metadata.flush()
-          throw error
+
+          // Interpolate values using outputs and system tokens
+          const values = Object.fromEntries(
+            Object.entries(node.data.values).map(([key, text]) => [
+              key,
+              interpolate({ text, outputs: execCtx.outputs }),
+            ])
+          )
+
+          const startedAt = Date.now()
+          try {
+            const output = (await executor({ orgId, values, getStagehand })) as any
+            execCtx.outputs[nodeId] = output
+            step.output = output
+            step.status = "done"
+            step.durationMs = Date.now() - startedAt
+
+            if (output?.details) {
+              logger.log(output.details)
+            }
+          } catch (error) {
+            step.status = "failed"
+            step.durationMs = Date.now() - startedAt
+            step.error = error instanceof Error ? error.message : String(error)
+            publishSteps()
+            await metadata.flush()
+            throw error
+          }
         }
 
-        step.status = "done"
-        step.durationMs = Date.now() - startedAt
+        // Determine downstream edges
+        const outgoing = edges.filter((e) => e.source === nodeId)
+
+        if (node.data.type === "if-else") {
+          const chosenBranch = (step.output as any)?.branch || "false"
+          const activeEdges = outgoing.filter(
+            (e) => e.sourceHandle === chosenBranch || !e.sourceHandle
+          )
+          const inactiveEdges = outgoing.filter(
+            (e) => e.sourceHandle && e.sourceHandle !== chosenBranch
+          )
+
+          // Queue active branch targets
+          for (const edge of activeEdges) {
+            executedOrQueued.add(edge.target)
+            queue.push(edge.target)
+          }
+
+          // Recursively mark unchosen branch nodes as skipped
+          for (const edge of inactiveEdges) {
+            markBranchAsSkipped(edge.target, edges, stepsMap, executedOrQueued)
+          }
+        } else {
+          // Standard node: queue all outgoing edges
+          for (const edge of outgoing) {
+            if (!executedOrQueued.has(edge.target)) {
+              executedOrQueued.add(edge.target)
+              queue.push(edge.target)
+            }
+          }
+        }
+
         publishSteps()
       }
 
@@ -170,9 +224,6 @@ export const runWorkflowTask = task({
   },
 })
 
-// Triggered by dynamic imperative schedules created when a user saves a workflow
-// with a Schedule trigger node. It unpacks the orgId and workflowId from the
-// externalId and triggers the actual run-workflow task.
 export const scheduledWorkflowTask = schedules.task({
   id: "scheduled-workflow",
   run: async (payload) => {
@@ -180,7 +231,6 @@ export const scheduledWorkflowTask = schedules.task({
       throw new Error("Missing externalId in schedule payload")
     }
 
-    // externalId is formatted as orgId|workflowId
     const [orgId, workflowId] = payload.externalId.split("|")
     if (!orgId || !workflowId) {
       throw new Error(`Invalid externalId format: ${payload.externalId}`)
@@ -188,7 +238,6 @@ export const scheduledWorkflowTask = schedules.task({
 
     logger.log("Triggering scheduled workflow", { orgId, workflowId })
 
-    // Trigger the actual workflow runner
     await tasks.trigger<typeof runWorkflowTask>(
       "run-workflow",
       { workflowId, orgId },

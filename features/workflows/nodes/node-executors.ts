@@ -12,6 +12,7 @@ import { openUrl } from "./open-url"
 import { sendEmail } from "./send-email"
 import { googleSheets } from "./google-sheets"
 import { wait } from "./wait"
+import { ifElse } from "./if-else"
 
 export type NodeContext = {
   orgId: string
@@ -44,4 +45,10 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
       mappedValues: values.values,
     }),
   wait: async ({ values }) => wait({ duration: values.duration }),
+  "if-else": async ({ values }) =>
+    ifElse({
+      leftValue: values.leftValue,
+      operator: values.operator,
+      rightValue: values.rightValue,
+    }),
 } satisfies Record<ActionNodeType, NodeExecutor>

@@ -70,12 +70,28 @@ export function Canvas() {
     onConnect(newConnection)
   }
 
+  const styledEdges = edges.map((edge) => {
+    if (edge.sourceHandle === "true") {
+      return {
+        ...edge,
+        style: { ...edge.style, stroke: "#22c55e", strokeWidth: 2 },
+      }
+    }
+    if (edge.sourceHandle === "false") {
+      return {
+        ...edge,
+        style: { ...edge.style, stroke: "#ef4444", strokeWidth: 2, strokeDasharray: "5 5" },
+      }
+    }
+    return edge
+  })
+
   return (
     <div className="size-full">
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
-        edges={edges}
+        edges={styledEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

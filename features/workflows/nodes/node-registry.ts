@@ -2,6 +2,7 @@ import type { Node } from "@xyflow/react"
 import {
   Bot,
   Eye,
+  GitBranch,
   Globe,
   Hourglass,
   Mail,
@@ -225,6 +226,51 @@ export const nodeRegistry = {
       },
     ],
     outputs: [{ path: "waitedSeconds", label: "Waited Seconds" }],
+  },
+  "if-else": {
+    type: "if-else",
+    kind: "action",
+    label: "If / Else",
+    icon: GitBranch,
+    accent: "bg-orange-500 text-white",
+    fields: [
+      {
+        key: "leftValue",
+        label: "Expression",
+        placeholder: "{{extract.price}}",
+        required: true,
+      },
+      {
+        key: "operator",
+        label: "Operator",
+        type: "select",
+        options: [
+          { label: "Equals (==)", value: "equals" },
+          { label: "Not Equals (!=)", value: "not_equals" },
+          { label: "Contains", value: "contains" },
+          { label: "Does Not Contain", value: "not_contains" },
+          { label: "Starts With", value: "starts_with" },
+          { label: "Ends With", value: "ends_with" },
+          { label: "Greater Than (>)", value: "greater_than" },
+          { label: "Greater Than or Equal (>=)", value: "greater_than_or_equal" },
+          { label: "Less Than (<)", value: "less_than" },
+          { label: "Less Than or Equal (<=)", value: "less_than_or_equal" },
+          { label: "Is Empty", value: "is_empty" },
+          { label: "Is Not Empty", value: "is_not_empty" },
+          { label: "Regex Match", value: "regex" },
+        ],
+        required: true,
+      },
+      {
+        key: "rightValue",
+        label: "Compare To",
+        placeholder: "50",
+      },
+    ],
+    outputs: [
+      { path: "result", label: "Result" },
+      { path: "branch", label: "Branch" },
+    ],
   },
 } satisfies Record<string, NodeDefinition>
 

@@ -6,10 +6,16 @@ import {
   ShieldCheck,
   Zap,
   Clock,
-  Cable
+  Cable,
+  GitBranch,
 } from "lucide-react"
 
 const features = [
+  {
+    title: "If / Else Logic & Branching",
+    description: "Build decision-making logic with our dynamic execution engine. Branch flows using 13 operators (regex, numeric comparisons, string matches) with visual True/False paths.",
+    icon: GitBranch,
+  },
   {
     title: "Infinite Visual Canvas",
     description: "Architect complex logic effortlessly by dragging nodes and connecting edges on a high-performance, infinite workspace.",

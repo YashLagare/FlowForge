@@ -49,6 +49,12 @@ export function validateGraph({ nodes, edges }: WorkflowGraph): string[] {
         problems.push(`${node.data.title}: Invalid mapped values format.`)
       }
     }
+
+    if (node.data.type === "if-else") {
+      const vals = node.data.values
+      if (!vals.leftValue) problems.push(`${node.data.title}: Expression is required.`)
+      if (!vals.operator) problems.push(`${node.data.title}: Operator is required.`)
+    }
   }
 
   return problems

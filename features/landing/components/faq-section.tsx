@@ -19,6 +19,10 @@ const faqs = [
     answer: "AI Agent Nodes are special powerful nodes available on our Pro plan. They use Large Language Models to process unstructured text, make decisions, or generate content dynamically during your workflow execution.",
   },
   {
+    question: "Can I build complex decision-making logic with If/Else conditions?",
+    answer: "Yes! FlowForge features an If / Else logic node powered by a dynamic execution engine. You can compare variables (such as extracted web text, prices, or AI outputs) across 13 operators (e.g., regex, numeric comparisons, string matches) with visual True (solid green) and False (dashed red) branches. Unchosen branches are automatically skipped during execution.",
+  },
+  {
     question: "How does the browser automation run?",
     answer: "Your workflows are executed asynchronously in the background using our robust cloud infrastructure. You don't need to keep your browser tab open—we handle timeouts, retries, and complex browser orchestration for you.",
   },

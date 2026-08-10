@@ -216,7 +216,7 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 
 **Dynamic Workflow Execution Engine**
 - **Purpose:** Execute visual workflow graphs in the background using a Dynamic Queue Walker that supports branching logic (`If / Else` nodes), array batch iteration (`Loop / Iterator` nodes), conditional path execution, recursive skip propagation, and infinite loop safeguards.
-- **Business Value:** Enables complex, Turing-complete decision-making automations (like n8n, Make, or Zapier) while ensuring reliable background execution without tying up the user's browser.
+- **Business Value:** Supports advanced control-flow automation with conditional branching, batch iteration, and safe dynamic graph traversal while ensuring reliable background execution without tying up the user's browser.
 - **Main Components:** Trigger.dev task `runWorkflowTask`, `ExecutionContext`, Trigger.dev Schedules API.
 - **Dependencies:** `@trigger.dev/sdk`, `@browserbasehq/stagehand`.
 
@@ -545,8 +545,8 @@ Example: **Triggering a Workflow Execution**
 
 - **Local Execution:** Support running Stagehand automations locally during development without consuming Browserbase credits.
 - **Workflow Versioning:** Store historical snapshots of the `graph` in the database, allowing users to revert to previous versions.
-- **Webhooks:** Allow workflows to be triggered via inbound webhooks, not just via the UI.
-- **More Node Types:** Expand the library of React Flow nodes for advanced logic (conditionals, loops).
+- **Inbound Webhooks:** Allow workflows to be triggered via external incoming webhook payloads.
+- **Advanced Workflow Nodes:** Expand the node library with parallel execution (Fork/Join), multi-branch Switch nodes, human-in-the-loop approvals, and reusable sub-workflows.
 
 ---
 

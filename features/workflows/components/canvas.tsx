@@ -48,6 +48,22 @@ function useMounted() {
   )
 }
 
+function getEdgeStyle(sourceHandle?: string | null): React.CSSProperties | undefined {
+  if (sourceHandle === "true") {
+    return { stroke: "#22c55e", strokeWidth: 2 }
+  }
+  if (sourceHandle === "false") {
+    return { stroke: "#ef4444", strokeWidth: 2, strokeDasharray: "5 5" }
+  }
+  if (sourceHandle === "body") {
+    return { stroke: "#a855f7", strokeWidth: 2 }
+  }
+  if (sourceHandle === "done") {
+    return { stroke: "#64748b", strokeWidth: 2 }
+  }
+  return undefined
+}
+
 export function Canvas() {
   const { resolvedTheme } = useTheme();
   const { isPro } = useProPlan();
@@ -71,19 +87,12 @@ export function Canvas() {
   }
 
   const styledEdges = edges.map((edge) => {
-    if (edge.sourceHandle === "true") {
-      return {
-        ...edge,
-        style: { ...edge.style, stroke: "#22c55e", strokeWidth: 2 },
-      }
+    const customStyle = getEdgeStyle(edge.sourceHandle)
+    if (!customStyle) return edge
+    return {
+      ...edge,
+      style: { ...edge.style, ...customStyle },
     }
-    if (edge.sourceHandle === "false") {
-      return {
-        ...edge,
-        style: { ...edge.style, stroke: "#ef4444", strokeWidth: 2, strokeDasharray: "5 5" },
-      }
-    }
-    return edge
   })
 
   return (

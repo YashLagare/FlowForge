@@ -77,7 +77,7 @@ export default function LearnMorePage() {
 
       {/* PHASE 3: ADVANCED CAPABILITIES */}
       <div className="mb-20">
-        <h2 className="text-3xl font-extrabold border-b pb-4 mb-10 text-foreground">Phase 3: Advanced Pro Features</h2>
+        <h2 className="text-3xl font-extrabold border-b pb-4 mb-10 text-foreground">Phase 3: Advanced Automation & Logic</h2>
         <div className="space-y-12">
           
           <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -85,7 +85,7 @@ export default function LearnMorePage() {
             <div>
               <h3 className="text-2xl font-semibold mb-3">Live Multiplayer Co-Editing</h3>
               <p className="text-muted-foreground leading-relaxed">
-                If your team members open the same workflow, you will see their cursors moving in real-time. You can build, edit, and troubleshoot logic simultaneously, just like working together in Google Docs.
+                If your team members open the same workflow, you will see their cursors moving in real-time. You can build, edit, and troubleshoot logic simultaneously, just like working together in Figma or Google Docs.
               </p>
             </div>
           </div>
@@ -94,26 +94,51 @@ export default function LearnMorePage() {
             <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-xl font-bold">7</div>
             <div>
               <h3 className="text-2xl font-semibold mb-3">Inject Autonomous AI Agents</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-                Need the browser to make dynamic decisions? Drag an <strong>AI Agent Node</strong> into your flow. Connect extracted text into the AI node, write a custom prompt (e.g., <em>"Analyze this text and tell me if it is positive or negative"</em>), and the AI will make decisions on the fly.
+              <p className="text-muted-foreground leading-relaxed">
+                Need the browser to make dynamic decisions? Drag an <strong>AI Agent Node</strong> into your flow. Connect extracted text into the AI node, write a custom prompt (e.g., <em>"Analyze this text and categorize sentiment"</em>), and the AI model will make autonomous decisions on the fly.
               </p>
+            </div>
+          </div>
 
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-xl font-bold">8</div>
+            <div>
               <h3 className="text-2xl font-semibold mb-3">Automate with Scheduled Triggers</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              <p className="text-muted-foreground leading-relaxed mb-3">
                 Want your workflow to run entirely hands-free? Replace the standard Start node with a <strong>Schedule Node</strong>.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+              <p className="text-muted-foreground leading-relaxed">
                 Using standard cron expressions (like <code>0 8 * * 1-5</code> to run every weekday at 8 AM), your workflows will execute automatically in the background on Trigger.dev's durable infrastructure.
               </p>
+            </div>
+          </div>
 
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-xl font-bold">9</div>
+            <div>
               <h3 className="text-2xl font-semibold mb-3">Pacing with Wait & Delay Controls</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+              <p className="text-muted-foreground leading-relaxed">
                 Need your flow to pause between actions or avoid web server rate-limits? Drag a <strong>Wait Node</strong> onto the canvas and specify the duration in seconds (or pass dynamic variables like <code>{"{{"}extract.delay{"}}"}</code>). FlowForge will safely hold execution before moving to downstream nodes.
               </p>
+            </div>
+          </div>
 
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-xl font-bold">10</div>
+            <div>
               <h3 className="text-2xl font-semibold mb-3">Dynamic Branching with If / Else Nodes</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+              <p className="text-muted-foreground leading-relaxed">
                 Build decision-making logic directly into your workflows. Drag an <strong>If / Else Node</strong> onto the canvas, define an Expression (e.g. <code>{"{{"}extract.price{"}}"}</code>), select an operator (like <em>Less Than</em>, <em>Contains</em>, or <em>Regex</em>), and enter a comparison value. The node features dual handles: <strong>IF TRUE</strong> (solid green) and <strong>IF FALSE</strong> (dashed red). FlowForge's dynamic graph walker will execute only the active branch while cleanly skipping unchosen paths!
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-xl font-bold">11</div>
+            <div>
+              <h3 className="text-2xl font-semibold mb-3">Batch Processing with Loop / Iterator Nodes</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Iterate through lists of items, product URLs, or data rows automatically. Drag a <strong>Loop Node</strong> onto the canvas, pass an input array (e.g., <code>{"{{"}extract.listings{"}}"}</code>), and connect downstream actions to the <strong>LOOP BODY</strong> (purple) handle. During execution, FlowForge exposes <code>{"{{"}loop.item{"}}"}</code>, <code>{"{{"}loop.index{"}}"}</code>, and <code>{"{{"}loop.total{"}}"}</code> tokens to every node in the loop. Once all items finish, execution seamlessly transitions out of the <strong>ON COMPLETE</strong> (slate) handle!
               </p>
             </div>
           </div>
@@ -127,10 +152,10 @@ export default function LearnMorePage() {
         <div className="space-y-12">
           
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl font-bold">8</div>
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl font-bold">12</div>
             <div>
               <h3 className="text-2xl font-semibold mb-3">Connecting Google Sheets</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              <p className="text-muted-foreground leading-relaxed mb-4">
                 FlowForge can push extracted data directly to your external tools. To set up Google Sheets, you need a Google Service Account:
               </p>
               <ol className="list-decimal list-inside space-y-2 text-muted-foreground mb-6 ml-2">
@@ -138,7 +163,7 @@ export default function LearnMorePage() {
                 <li>Enable the <strong>Google Sheets API</strong> for your project.</li>
                 <li>Go to <strong>Credentials</strong> and create a new <strong>Service account</strong>.</li>
                 <li>Open the Service Account, go to the <strong>Keys</strong> tab, and create a new <strong>JSON</strong> key.</li>
-                <li>Go to the <a href="/connections" className="text-primary hover:underline">Connections Dashboard</a> in FlowForge, create a Google Sheets connection, and paste the entire JSON file contents.</li>
+                <li>Go to the <a href="/connections" className="text-primary hover:underline font-medium">Connections Dashboard</a> in FlowForge, create a Google Sheets connection, and paste the entire JSON file contents.</li>
               </ol>
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mb-4">
                 <p className="text-amber-700 dark:text-amber-400 font-medium text-sm">
@@ -149,13 +174,13 @@ export default function LearnMorePage() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl font-bold">9</div>
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl font-bold">13</div>
             <div>
               <h3 className="text-2xl font-semibold mb-3">Using the Google Sheets Node</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              <p className="text-muted-foreground leading-relaxed mb-4">
                 Drag the Google Sheets node onto your canvas. Select your configured Connection, enter the Spreadsheet ID (found in the sheet URL), and type the Sheet Name.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 Using the Key-Value mapping tool, map your spreadsheet columns to your extracted variables. For example, if you want the `Company` column in your spreadsheet to contain the extracted company name, map the key `Company` to the value `{"{{"}extract.company{"}}"}`. The node will automatically find the right columns in your sheet and append the row!
               </p>
             </div>
@@ -170,21 +195,21 @@ export default function LearnMorePage() {
         <div className="space-y-12">
           
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">10</div>
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">14</div>
             <div>
-              <h3 className="text-2xl font-semibold mb-3">Execute in the Background</h3>
+              <h3 className="text-2xl font-semibold mb-3">Dynamic Queue Walker Engine</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Click the <strong>"Run Workflow"</strong> button. Your automation is immediately sent to our durable cloud engine. You can safely close the tab—our servers will handle the headless browser orchestration securely in the background.
+                Click the <strong>"Run Workflow"</strong> button. Your automation is immediately evaluated and walked by our resilient cloud execution engine. With cycle detection and recursive skip propagation, you can safely close your browser tab while your workflows execute reliably in the background.
               </p>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">11</div>
+            <div className="flex-shrink-0 h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">15</div>
             <div>
               <h3 className="text-2xl font-semibold mb-3">Watch Video Session Replays</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Once a run completes, go to the <strong>Executions</strong> tab. You can click on any past run to watch a pixel-perfect <strong>Video Replay</strong>. You will see exactly what the robot saw and clicked on, making debugging incredibly simple!
+                Once a run completes, go to the <strong>Executions</strong> tab. You can click on any past run to watch a pixel-perfect <strong>Video Replay</strong>. You will see exactly what the headless browser saw and clicked on, making debugging visual and effortless!
               </p>
             </div>
           </div>

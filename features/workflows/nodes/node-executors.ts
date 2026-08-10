@@ -13,6 +13,7 @@ import { sendEmail } from "./send-email"
 import { googleSheets } from "./google-sheets"
 import { wait } from "./wait"
 import { ifElse } from "./if-else"
+import { loop } from "./loop"
 
 export type NodeContext = {
   orgId: string
@@ -50,5 +51,10 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
       leftValue: values.leftValue,
       operator: values.operator,
       rightValue: values.rightValue,
+    }),
+  loop: async ({ values }) =>
+    loop({
+      inputArray: values.inputArray,
+      maxItems: values.maxItems,
     }),
 } satisfies Record<ActionNodeType, NodeExecutor>

@@ -100,6 +100,33 @@ function StepNodeComponent({ id, data, selected }: NodeProps<StepNodeType>) {
             className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-red-500!"
           />
         </>
+      ) : type === "loop" ? (
+        <>
+          <div className="border-t border-border px-3 py-1.5 flex flex-col gap-2 text-[10px] font-bold">
+            <div className="flex items-center justify-end gap-1.5 text-purple-600 dark:text-purple-400">
+              <span>LOOP BODY</span>
+              <span className="size-2 rounded-full bg-purple-500 inline-block" />
+            </div>
+            <div className="flex items-center justify-end gap-1.5 text-slate-600 dark:text-slate-400">
+              <span>ON COMPLETE</span>
+              <span className="size-2 rounded-full bg-slate-500 inline-block" />
+            </div>
+          </div>
+          <Handle
+            type="source"
+            id="body"
+            position={Position.Right}
+            style={{ top: "45%", transform: "translate(100%, -50%)" }}
+            className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-purple-500!"
+          />
+          <Handle
+            type="source"
+            id="done"
+            position={Position.Right}
+            style={{ top: "85%", transform: "translate(100%, -50%)" }}
+            className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-slate-500!"
+          />
+        </>
       ) : (
         <Handle
           type="source"

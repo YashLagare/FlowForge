@@ -76,8 +76,8 @@ export async function AppSidebar({
                   <Sparkles className="h-4 w-4 text-primary" />
                   Upgrade to Pro
                 </CardTitle>
-                <CardDescription className="text-xs leading-relaxed">
-                  Unlock premium nodes (Agent, Send Email, Schedule, Google Sheets, Wait Delay), session replays, unlimited workflows, and real-time collaboration with your team.
+                <CardDescription className="text-xs">
+                  Unlock premium nodes (Agent, Send Email, Schedule, Google Sheets, Wait Delay, Loop Iterator), session replays, unlimited workflows, and real-time collaboration with your team.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 pt-2">

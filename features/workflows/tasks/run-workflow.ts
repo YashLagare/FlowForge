@@ -5,10 +5,13 @@ import { nodeExecutors } from "@/features/workflows/nodes/node-executors"
 import {
   interpolate,
   type NodeOutputs,
+  type LoopState,
 } from "@/features/workflows/lib/interpolate"
 import { getWorkflow } from "@/features/workflows/data"
 import type { NodeType, StepNodeType } from "@/features/workflows/nodes/node-registry"
 import type { Edge } from "@xyflow/react"
+
+const MAX_TOTAL_STEP_EXECUTIONS = 500
 
 // One entry per node the run will walk, published to the run's metadata under
 // "steps" so the canvas — and the run console below it — can watch each node
@@ -28,12 +31,45 @@ export type RunStep = {
   error?: string
 }
 
-// Execution Context holding state, outputs, system variables, and loop safeguards.
+export interface LoopFrame {
+  nodeId: string
+  items: unknown[]
+  currentIndex: number // 1-based (1, 2, ..., total)
+  total: number
+  bodyStartNodeIds: string[]
+  bodyNodeIds: Set<string>
+  doneTargetNodeIds: string[]
+}
+
+// Execution Context holding state, outputs, loopStack, and safeguards.
 export interface ExecutionContext {
   workflowId: string
   orgId: string
   outputs: NodeOutputs
   visitCounts: Map<string, number>
+  loopStack: LoopFrame[]
+}
+
+// Recursively discovers all nodes that belong to a loop body sub-graph
+function findBodyReachableNodes(
+  startNodeIds: string[],
+  edges: Edge[],
+  doneTargetNodeIds: Set<string>
+): Set<string> {
+  const result = new Set<string>()
+  const queue = [...startNodeIds]
+  while (queue.length > 0) {
+    const id = queue.shift()!
+    if (result.has(id) || doneTargetNodeIds.has(id)) continue
+    result.add(id)
+    const outgoing = edges.filter((e) => e.source === id)
+    for (const e of outgoing) {
+      if (!doneTargetNodeIds.has(e.target)) {
+        queue.push(e.target)
+      }
+    }
+  }
+  return result
 }
 
 // Recursively walks down an unchosen branch to mark downstream nodes as "skipped"
@@ -119,21 +155,65 @@ export const runWorkflowTask = task({
       orgId,
       outputs: {},
       visitCounts: new Map(),
+      loopStack: [],
     }
 
-    // Queue for dynamic BFS/DFS walker
+    // Queue for dynamic graph walker
     const queue: string[] = [triggerNode.id]
     const executedOrQueued = new Set<string>([triggerNode.id])
+    let totalStepExecutions = 0
 
     try {
-      while (queue.length > 0) {
+      while (queue.length > 0 || execCtx.loopStack.length > 0) {
         signal.throwIfAborted()
+
+        // Check if current queue is empty but an active loop iteration just completed
+        if (queue.length === 0 && execCtx.loopStack.length > 0) {
+          const activeLoop = execCtx.loopStack[execCtx.loopStack.length - 1]
+          logger.log(`[Loop] Iteration ${activeLoop.currentIndex}/${activeLoop.total} completed.`)
+
+          if (activeLoop.currentIndex < activeLoop.total) {
+            activeLoop.currentIndex += 1
+            logger.log(`[Loop] Starting iteration ${activeLoop.currentIndex}/${activeLoop.total}...`)
+
+            // Reset status of body nodes to pending for the next iteration
+            for (const bodyId of activeLoop.bodyNodeIds) {
+              const step = stepsMap.get(bodyId)
+              if (step) step.status = "pending"
+            }
+            publishSteps()
+
+            // Re-enqueue body start nodes
+            for (const bodyStartId of activeLoop.bodyStartNodeIds) {
+              queue.push(bodyStartId)
+            }
+            continue
+          } else {
+            // Loop finished all iterations
+            execCtx.loopStack.pop()
+            logger.log(`[Loop] All ${activeLoop.total} iteration(s) finished. Transitioning to ON COMPLETE.`)
+
+            for (const doneId of activeLoop.doneTargetNodeIds) {
+              executedOrQueued.add(doneId)
+              queue.push(doneId)
+            }
+            continue
+          }
+        }
 
         const nodeId = queue.shift()!
         const step = stepsMap.get(nodeId)!
         const node = byId.get(nodeId)!
 
-        // Cycle Safeguard: Prevent infinite loops
+        // Global Execution Cap Safeguard
+        totalStepExecutions += 1
+        if (totalStepExecutions > MAX_TOTAL_STEP_EXECUTIONS) {
+          throw new Error(
+            `Workflow execution stopped: exceeded maximum step executions limit (${MAX_TOTAL_STEP_EXECUTIONS}).`
+          )
+        }
+
+        // Cycle Safeguard per single node
         const visitCount = (execCtx.visitCounts.get(nodeId) || 0) + 1
         execCtx.visitCounts.set(nodeId, visitCount)
         if (visitCount > 100) {
@@ -142,7 +222,25 @@ export const runWorkflowTask = task({
           )
         }
 
-        logger.log(`Executing step: ${node.data.title} (Visit ${visitCount})`)
+        // Resolve active loop frame for interpolation
+        const currentLoopFrame =
+          execCtx.loopStack.length > 0
+            ? execCtx.loopStack[execCtx.loopStack.length - 1]
+            : undefined
+
+        const activeLoopState: LoopState | undefined = currentLoopFrame
+          ? {
+              item: currentLoopFrame.items[currentLoopFrame.currentIndex - 1],
+              index: currentLoopFrame.currentIndex,
+              total: currentLoopFrame.total,
+            }
+          : undefined
+
+        logger.log(
+          `Executing step: ${node.data.title}${
+            activeLoopState ? ` (Loop item ${activeLoopState.index}/${activeLoopState.total})` : ""
+          }`
+        )
 
         const executor = nodeExecutors[node.data.type]
         if (!executor) {
@@ -153,11 +251,11 @@ export const runWorkflowTask = task({
           publishSteps()
           await metadata.flush()
 
-          // Interpolate values using outputs and system tokens
+          // Interpolate values using outputs, system tokens, and loopState
           const values = Object.fromEntries(
             Object.entries(node.data.values).map(([key, text]) => [
               key,
-              interpolate({ text, outputs: execCtx.outputs }),
+              interpolate({ text, outputs: execCtx.outputs, loopState: activeLoopState }),
             ])
           )
 
@@ -175,7 +273,10 @@ export const runWorkflowTask = task({
           } catch (error) {
             step.status = "failed"
             step.durationMs = Date.now() - startedAt
-            step.error = error instanceof Error ? error.message : String(error)
+            const errMsg = error instanceof Error ? error.message : String(error)
+            step.error = activeLoopState
+              ? `Loop failed at iteration ${activeLoopState.index}/${activeLoopState.total}: ${errMsg}`
+              : errMsg
             publishSteps()
             await metadata.flush()
             throw error
@@ -203,6 +304,38 @@ export const runWorkflowTask = task({
           // Recursively mark unchosen branch nodes as skipped
           for (const edge of inactiveEdges) {
             markBranchAsSkipped(edge.target, edges, stepsMap, executedOrQueued)
+          }
+        } else if (node.data.type === "loop") {
+          const items = (step.output as any)?.items || []
+          const bodyEdges = outgoing.filter((e) => e.sourceHandle === "body")
+          const doneEdges = outgoing.filter((e) => e.sourceHandle === "done")
+          const doneTargets = new Set(doneEdges.map((e) => e.target))
+          const bodyStartTargets = bodyEdges.map((e) => e.target)
+          const bodyNodeIds = findBodyReachableNodes(bodyStartTargets, edges, doneTargets)
+
+          if (items.length === 0) {
+            logger.log(`[Loop] Input array is empty. Transitioning directly to ON COMPLETE.`)
+            for (const doneId of doneTargets) {
+              executedOrQueued.add(doneId)
+              queue.push(doneId)
+            }
+          } else {
+            const frame: LoopFrame = {
+              nodeId,
+              items,
+              currentIndex: 1,
+              total: items.length,
+              bodyStartNodeIds: bodyStartTargets,
+              bodyNodeIds,
+              doneTargetNodeIds: Array.from(doneTargets),
+            }
+            execCtx.loopStack.push(frame)
+            logger.log(`[Loop] Starting iteration 1/${frame.total}...`)
+
+            for (const bodyStartId of bodyStartTargets) {
+              executedOrQueued.add(bodyStartId)
+              queue.push(bodyStartId)
+            }
           }
         } else {
           // Standard node: queue all outgoing edges

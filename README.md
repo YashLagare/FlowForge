@@ -215,13 +215,13 @@ The application follows a modern Serverless/Hybrid architecture. The frontend an
 - **Dependencies:** `@liveblocks/react`, `@liveblocks/node`.
 
 **Dynamic Workflow Execution Engine**
-- **Purpose:** Execute visual workflow graphs in the background using a Dynamic Queue Walker that supports branching logic (`If / Else` nodes), conditional path execution, recursive skip propagation, and infinite loop safeguards.
+- **Purpose:** Execute visual workflow graphs in the background using a Dynamic Queue Walker that supports branching logic (`If / Else` nodes), array batch iteration (`Loop / Iterator` nodes), conditional path execution, recursive skip propagation, and infinite loop safeguards.
 - **Business Value:** Enables complex, Turing-complete decision-making automations (like n8n, Make, or Zapier) while ensuring reliable background execution without tying up the user's browser.
 - **Main Components:** Trigger.dev task `runWorkflowTask`, `ExecutionContext`, Trigger.dev Schedules API.
 - **Dependencies:** `@trigger.dev/sdk`, `@browserbasehq/stagehand`.
 
 **Plan-Based Feature Gating**
-- **Purpose:** Restrict premium features (e.g., AI Agent nodes, Schedule nodes, Google Sheets nodes, Wait/Delay nodes) and limit workflow creation (Free tier limited to 2 workflows) to drive paid conversions.
+- **Purpose:** Restrict premium features (e.g., AI Agent nodes, Schedule nodes, Google Sheets nodes, Wait/Delay nodes, Loop/Iterator nodes) and limit workflow creation (Free tier limited to 2 workflows) to drive paid conversions.
 - **Business Value:** Drives monetization and covers infrastructure costs for intensive background tasks.
 - **Main Components:** Clerk billing entitlements (`has({ plan: "pro" })`).
 - **Dependencies:** `@clerk/nextjs`.

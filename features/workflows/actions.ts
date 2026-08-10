@@ -86,7 +86,8 @@ export async function runWorkflowAction({
       node.data.type === "send-email" ||
       node.data.type === "schedule" ||
       node.data.type === "google-sheets" ||
-      node.data.type === "wait"
+      node.data.type === "wait" ||
+      node.data.type === "loop"
   )
   if (hasPremiumNode && !has({ plan: "pro" })) {
     Sentry.logger.warn("Workflow run denied — Premium nodes require Pro plan", {

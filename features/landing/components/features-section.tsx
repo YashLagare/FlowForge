@@ -8,9 +8,15 @@ import {
   Clock,
   Cable,
   GitBranch,
+  Repeat,
 } from "lucide-react"
 
 const features = [
+  {
+    title: "Loop & Batch Iteration",
+    description: "Iterate over arrays of extracted items, URLs, or data rows. Run downstream action sequences for every item in parallel or sequence, with a dedicated On Complete path.",
+    icon: Repeat,
+  },
   {
     title: "If / Else Logic & Branching",
     description: "Build decision-making logic with our dynamic execution engine. Branch flows using 13 operators (regex, numeric comparisons, string matches) with visual True/False paths.",

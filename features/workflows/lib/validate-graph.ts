@@ -55,6 +55,11 @@ export function validateGraph({ nodes, edges }: WorkflowGraph): string[] {
       if (!vals.leftValue) problems.push(`${node.data.title}: Expression is required.`)
       if (!vals.operator) problems.push(`${node.data.title}: Operator is required.`)
     }
+
+    if (node.data.type === "loop") {
+      const vals = node.data.values
+      if (!vals.inputArray) problems.push(`${node.data.title}: Input Array is required.`)
+    }
   }
 
   return problems

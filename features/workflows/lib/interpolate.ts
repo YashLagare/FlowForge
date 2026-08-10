@@ -21,17 +21,46 @@ function getByPath(root: NodeOutputs, path: string): unknown {
   }, root)
 }
 
+export type LoopState = {
+  item: unknown
+  index: number
+  total: number
+}
+
 export function interpolate({
   text,
   outputs,
+  loopState,
 }: {
   text: string
   outputs: NodeOutputs
+  loopState?: LoopState
 }): string {
   return text.replace(PLACEHOLDER, (_match, rawExpr: string) => {
     const expr = rawExpr.trim()
     if (expr === "workflow.timestamp" || expr === "trigger.timestamp") {
       return new Date().toISOString()
+    }
+    if (loopState) {
+      if (expr === "loop.item") {
+        const val = loopState.item
+        if (typeof val === "object") return JSON.stringify(val)
+        return String(val ?? "")
+      }
+      if (expr === "loop.index") return String(loopState.index)
+      if (expr === "loop.total") return String(loopState.total)
+      if (expr.startsWith("loop.item.")) {
+        const subPath = expr.replace(/^loop\.item\./, "")
+        const val = getByPath(
+          typeof loopState.item === "object" && loopState.item !== null
+            ? (loopState.item as Record<string, unknown>)
+            : {},
+          subPath
+        )
+        if (val == null) return ""
+        if (typeof val === "object") return JSON.stringify(val)
+        return String(val)
+      }
     }
     const value = getByPath(outputs, expr)
     if (value == null) return ""

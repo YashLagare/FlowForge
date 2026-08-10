@@ -8,6 +8,7 @@ import {
   Mail,
   MousePointerClick,
   Pointer,
+  Repeat,
   ScanText,
   Timer,
   Table,
@@ -270,6 +271,31 @@ export const nodeRegistry = {
     outputs: [
       { path: "result", label: "Result" },
       { path: "branch", label: "Branch" },
+    ],
+  },
+  loop: {
+    type: "loop",
+    kind: "action",
+    label: "Loop / Iterator",
+    icon: Repeat,
+    accent: "bg-purple-500 text-white",
+    fields: [
+      {
+        key: "inputArray",
+        label: "Input Array",
+        placeholder: "{{extract.listings}} or [\"item1\", \"item2\"]",
+        required: true,
+      },
+      {
+        key: "maxItems",
+        label: "Max Items (Server Cap: 50)",
+        placeholder: "50",
+      },
+    ],
+    outputs: [
+      { path: "item", label: "Current Item" },
+      { path: "index", label: "Current Index" },
+      { path: "total", label: "Total Items" },
     ],
   },
 } satisfies Record<string, NodeDefinition>

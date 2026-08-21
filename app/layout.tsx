@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { ChunkErrorHandler } from "@/components/chunk-error-handler"
 import { cn } from "@/lib/utils"
 import "@clerk/ui/themes/shadcn.css"
 import "./globals.css"
@@ -39,6 +40,7 @@ export default function RootLayout({
         >
           <ThemeProvider>
             <TooltipProvider>
+              <ChunkErrorHandler />
               {children}
               <Toaster />
             </TooltipProvider>

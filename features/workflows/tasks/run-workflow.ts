@@ -1,14 +1,14 @@
-import { logger, metadata, task, schedules, tasks } from "@trigger.dev/sdk"
-import type { DeserializedJson } from "@trigger.dev/core"
-import { Stagehand } from "@browserbasehq/stagehand"
-import { nodeExecutors } from "@/features/workflows/nodes/node-executors"
+import { getWorkflow } from "@/features/workflows/data"
 import {
   interpolate,
-  type NodeOutputs,
   type LoopState,
+  type NodeOutputs,
 } from "@/features/workflows/lib/interpolate"
-import { getWorkflow } from "@/features/workflows/data"
-import type { NodeType, StepNodeType } from "@/features/workflows/nodes/node-registry"
+import { nodeExecutors } from "@/features/workflows/nodes/node-executors"
+import type { NodeType } from "@/features/workflows/nodes/node-registry"
+import { Stagehand } from "@browserbasehq/stagehand"
+import type { DeserializedJson } from "@trigger.dev/core"
+import { logger, metadata, schedules, task, tasks } from "@trigger.dev/sdk"
 import type { Edge } from "@xyflow/react"
 
 const MAX_TOTAL_STEP_EXECUTIONS = 500
@@ -231,15 +231,14 @@ export const runWorkflowTask = task({
 
         const activeLoopState: LoopState | undefined = currentLoopFrame
           ? {
-              item: currentLoopFrame.items[currentLoopFrame.currentIndex - 1],
-              index: currentLoopFrame.currentIndex,
-              total: currentLoopFrame.total,
-            }
+            item: currentLoopFrame.items[currentLoopFrame.currentIndex - 1],
+            index: currentLoopFrame.currentIndex,
+            total: currentLoopFrame.total,
+          }
           : undefined
 
         logger.log(
-          `Executing step: ${node.data.title}${
-            activeLoopState ? ` (Loop item ${activeLoopState.index}/${activeLoopState.total})` : ""
+          `Executing step: ${node.data.title}${activeLoopState ? ` (Loop item ${activeLoopState.index}/${activeLoopState.total})` : ""
           }`
         )
 

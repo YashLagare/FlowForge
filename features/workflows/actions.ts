@@ -52,6 +52,25 @@ export async function deleteWorkflowAction(id: string) {
   // The workflow id doubles as its Liveblocks room id — clean it up too.
   await liveblocks.deleteRoom(id)
 
+  // Also clean up any active schedule in Trigger.dev for this workflow
+  try {
+    const list = await schedules.list()
+    const schedule = list.data.find((s) => s.externalId === `${orgId}|${id}`)
+    if (schedule) {
+      await schedules.del(schedule.id)
+      Sentry.logger.info("Associated workflow schedule deleted", {
+        workflowId: id,
+        orgId,
+        scheduleId: schedule.id,
+      })
+    }
+  } catch (error) {
+    Sentry.logger.warn("Failed to clean up workflow schedule during deletion", {
+      workflowId: id,
+      error,
+    })
+  }
+
   Sentry.logger.info("Workflow deleted", { workflowId: id, orgId })
 
   revalidatePath("/workflows", "layout")

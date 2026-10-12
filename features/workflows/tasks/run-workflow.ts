@@ -105,7 +105,8 @@ export const runWorkflowTask = task({
   id: "run-workflow",
   run: async ({ workflowId, orgId }: { workflowId: string; orgId: string }, { ctx, signal }) => {
     const workflow = await getWorkflow(orgId, workflowId)
-    if (!workflow?.graph) throw new Error(`Workflow ${workflowId} has no graph`)
+    if (!workflow) throw new Error(`Workflow ${workflowId} does not exist in database`)
+    if (!workflow.graph) throw new Error(`Workflow ${workflowId} has no saved graph in database`)
 
     const { nodes, edges } = workflow.graph
     const byId = new Map(nodes.map((n) => [n.id, n]))
@@ -361,12 +362,39 @@ export const scheduledWorkflowTask = schedules.task({
   id: "scheduled-workflow",
   run: async (payload) => {
     if (!payload.externalId) {
-      throw new Error("Missing externalId in schedule payload")
+      logger.warn("Missing externalId in schedule payload, deleting schedule", {
+        scheduleId: payload.scheduleId,
+      })
+      await schedules.del(payload.scheduleId)
+      return
     }
 
     const [orgId, workflowId] = payload.externalId.split("|")
     if (!orgId || !workflowId) {
-      throw new Error(`Invalid externalId format: ${payload.externalId}`)
+      logger.warn(`Invalid externalId format: ${payload.externalId}, deleting schedule`, {
+        scheduleId: payload.scheduleId,
+      })
+      await schedules.del(payload.scheduleId)
+      return
+    }
+
+    // Verify the workflow still exists in the database
+    const workflow = await getWorkflow(orgId, workflowId)
+    if (!workflow) {
+      logger.warn(
+        `Workflow ${workflowId} no longer exists in database. Automatically deleting orphaned schedule ${payload.scheduleId}.`,
+        { orgId, workflowId, scheduleId: payload.scheduleId }
+      )
+      await schedules.del(payload.scheduleId)
+      return
+    }
+
+    if (!workflow.graph) {
+      logger.warn(
+        `Workflow ${workflowId} exists but has no saved graph. Skipping scheduled run.`,
+        { orgId, workflowId, scheduleId: payload.scheduleId }
+      )
+      return
     }
 
     logger.log("Triggering scheduled workflow", { orgId, workflowId })

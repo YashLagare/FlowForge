@@ -18,6 +18,11 @@ export default withSentryConfig(nextConfig, {
   // Route Sentry requests through your own domain to bypass ad-blockers
   tunnelRoute: "/monitoring",
 
+  // Disable sourcemap uploads during build to prevent Sentry CLI 403 / project-not-found errors
+  sourcemaps: {
+    disable: true,
+  },
+
   // Suppress build output outside CI
   silent: !process.env.CI,
 })

@@ -397,6 +397,16 @@ export const scheduledWorkflowTask = schedules.task({
       return
     }
 
+    const triggerNode = workflow.graph.nodes.find((n) => n.data.kind === "trigger")
+    if (triggerNode?.data.type !== "schedule") {
+      logger.warn(
+        `Workflow ${workflowId} no longer has a schedule trigger. Automatically deleting obsolete schedule ${payload.scheduleId}.`,
+        { orgId, workflowId, scheduleId: payload.scheduleId }
+      )
+      await schedules.del(payload.scheduleId)
+      return
+    }
+
     logger.log("Triggering scheduled workflow", { orgId, workflowId })
 
     await tasks.trigger<typeof runWorkflowTask>(
